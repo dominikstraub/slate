@@ -20,9 +20,9 @@ bind key:modal-key operation parameter+
 * Command: `cmd`
 * Shift: `shift`
 
-**Note:** If you bind `tab:cmd` or `tab:cmd,shift`, Slate will completely disable the default Mac OS X Application switcher!
+**Note:** If you bind `tab:cmd` or `tab:cmd,shift`, Slate will completely disable the default macOS Application switcher!
 
-**Note:** Bindings that are used by Mac OS X spaces, expose, and mission control will override Slate bindings. Be sure to turn these bindings off if you want to use them in Slate.
+**Note:** Bindings that are used by macOS spaces, expose, and mission control will override Slate bindings. Be sure to turn these bindings off if you want to use them in Slate.
 
 ## `modal-key` ##
 
@@ -40,7 +40,7 @@ Operations define what to actually do to the focused window.
 
 Some operations allow you to specify a screen. Here are the list of possible values for screen:
 
-* Integer representing the screen ID (indexed at 0). Screens are ordered from left to right (by X coordinate of the origin which is the top-left point). If `orderScreensLeftToRight` is set to false, the screen ID is the Mac OS internal ID (indexed at 0). If `orderScreensLeftToRight` is set to false but you still want to reference screens in the default ordered mode, prefix the screen ID with `ordered:`.
+* Integer representing the screen ID (indexed at 0). Screens are ordered from left to right (by X coordinate of the origin which is the top-left point). If `orderScreensLeftToRight` is set to false, the screen ID is the macOS internal ID (indexed at 0). If `orderScreensLeftToRight` is set to false but you still want to reference screens in the default ordered mode, prefix the screen ID with `ordered:`.
 * Screen resolution in the format `WIDTHxHEIGHT` (e.g. `1440x900`)
 * Screen direction relative to the current screen (`left|right|up|above|down|below`)
 * `next` or `previous` (represents the `currentID+1` or `currentID-1` screen)
@@ -87,7 +87,7 @@ bind right:ctrl resize +10% +0
 
 Will bind the keystroke ctrl-rightarrow to increase the width the current window by `10%`.
 
-**Note:** ctrl-rightarrow is used by default in Mac OS X by spaces. Be sure to turn these bindings off if you want to use them in Slate.
+**Note:** ctrl-rightarrow is used by default in macOS by spaces. Be sure to turn these bindings off if you want to use them in Slate.
 
 #### `push`: push the window to the edge of the screen ####
 
@@ -186,7 +186,7 @@ hide applications
 
 * `applications` is a comma separated list of application names. Individual application names must be surrounded by quotes. You can also specify `current`, `all`, or `all-but:` for the Application name (no quotes).
     * `current` will apply to the currently focused application.
-    * `all` will apply to all open applications. Note that when trying to hide `all` it will not work as intended because OS X will not allow every visible app to be hidden. Hiding `all` will hide all apps but OS X will auto-show one of the apps that were hidden.
+    * `all` will apply to all open applications. Note that when trying to hide `all` it will not work as intended because macOS will not allow every visible app to be hidden. Hiding `all` will hide all apps but macOS will auto-show one of the apps that were hidden.
     * `all-but:'APP_NAME'` will apply to all open applications except `APP_NAME`. 
 
 Example:
@@ -224,7 +224,7 @@ toggle applications
 
 * `applications` is a comma separated list of application names. Individual application names must be surrounded by quotes. You can also specify `current`, `all`, or `all-but:` for the Application name (no quotes).
     * `current` will apply to the currently focused application.
-    * `all` will apply to all open applications. Note that when trying to toggle `all` it will may not work as intended because OS X will not allow every visible app to be hidden. If at any point during the toggling all apps become hidden, OS X will auto-show one of the apps that were hidden.
+    * `all` will apply to all open applications. Note that when trying to toggle `all` it will may not work as intended because macOS will not allow every visible app to be hidden. If at any point during the toggling all apps become hidden, macOS will auto-show one of the apps that were hidden.
     * `all-but:'APP_NAME'` will apply to all open applications except `APP_NAME`.
 
 Example:
@@ -436,13 +436,13 @@ bind 1:ctrl undo
 
 Will bind the keystroke ctrl-1 to undo the last binding that was triggered. By default you can undo up to the last 10 commands. This can be changed using the `undoMaxStackSize` config. Also, you can only undo movement-based operations. Focus-related operations will not undo.
 
-#### `switch`: \[Beta\] a better application switcher ####
+#### `switch`: a better application switcher ####
 
 ```
 switch
 ```
 
-If you bind any binding to cmd-tab or cmd-shift-tab, Slate will completely disable the default Mac OS X Application switcher!
+If you bind any binding to cmd-tab or cmd-shift-tab, Slate will completely disable the default macOS Application switcher!
 
 Example:
 
@@ -450,6 +450,6 @@ Example:
 bind tab:cmd switch
 ```
 
-Will disable the default Mac OS X Application switcher and bind the keystroke cmd-tab to a better application switcher.
+Will disable the default macOS Application switcher and bind the keystroke cmd-tab to a better application switcher.
 
 **Note:** There are *tons* of config options to tweak this.

@@ -78,8 +78,13 @@
     SlateLogger(@"I see application '%@' with pid '%d'", appName, appPID);
     AXUIElementRef appRef = AXUIElementCreateApplication(appPID);
     CFArrayRef windowsArrRef = [AccessibilityWrapper windowsInApp:appRef];
-    if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) continue;
+    if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) {
+      if (windowsArrRef) CFRelease(windowsArrRef);
+      CFRelease(appRef);
+      continue;
+    }
     CFMutableArrayRef windowsArr = CFArrayCreateMutableCopy(kCFAllocatorDefault, 0, windowsArrRef);
+    CFRelease(windowsArrRef);
     for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
       SlateLogger(@" Printing Window: %@", [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)]);
       NSString *title = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];
@@ -89,6 +94,8 @@
       NSPoint tl = [aw getCurrentTopLeft];
       [snapshot addWindow:[[WindowSnapshot alloc] initWithAppName:appName title:title topLeft:tl size:size] app:appName];
     }
+    CFRelease(windowsArr);
+    CFRelease(appRef);
   }
   [[SlateConfig getInstance] addSnapshot:snapshot name:name saveToDisk:saveToDisk isStack:isStack stackSize:stackSize];
   return YES;

@@ -72,7 +72,10 @@ static SlateConfig *_instance = nil;
     [self setSnapshots:[NSMutableDictionary dictionary]];
     
     // Listen for screen change notifications with Quartz
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGDisplayRegisterReconfigurationCallback(onDisplayReconfiguration, (__bridge void *)(self));
+#pragma clang diagnostic pop
     //[nc addObserver:self selector:@selector(processNotification:) name:nil object:nil];
   }
   return self;
@@ -126,7 +129,7 @@ static SlateConfig *_instance = nil;
 
 + (NSAlert *)warningAlertWithKeyEquivalents:(NSArray *)titles {
   NSAlert *alert = [[NSAlert alloc] init];
-  [alert setAlertStyle:NSWarningAlertStyle];
+  [alert setAlertStyle:NSAlertStyleWarning];
   for (NSString *title in titles) {
     [[alert addButtonWithTitle:title] setKeyEquivalent:[[title substringToIndex: 1] lowercaseString]];
   }
@@ -150,7 +153,7 @@ static SlateConfig *_instance = nil;
     SlateLogger(@"  ERROR Could not load ~/.slate or ~/.slate.js");
     NSAlert *alert = [SlateConfig warningAlertWithKeyEquivalents: [NSArray arrayWithObjects:@"Continue", @"Quit", nil]];
     [alert setMessageText:@"Could not load ~/.slate or ~/.slate.js"];
-    [alert setInformativeText:@"The default configuration will be used. You can find the default .slate file at https://github.com/jigish/slate/blob/master/Slate/default.slate"];
+    [alert setInformativeText:@"The default configuration will be used. You can find the default .slate file at https://github.com/dominikstraub/slate/blob/main/Slate/default.slate"];
     if ([alert runModal] == NSAlertSecondButtonReturn) {
       SlateLogger(@"User selected exit");
       [NSApp terminate:nil];

@@ -19,11 +19,38 @@
 //  along with this program.  If not, see http://www.gnu.org/licenses
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 
 @class AccessibilityWrapper;
 @class ScreenWrapper;
+@class JSScreenWrapper;
+@class JSApplicationWrapper;
 
-@interface JSWindowWrapper : NSObject {
+@protocol JSWindowWrapperExports <JSExport>
+- (NSString *)title;
+- (id)topLeft;
+- (id)tl;
+- (id)size;
+- (id)rect;
+- (pid_t)pid;
+- (BOOL)focus;
+- (BOOL)isMinimizedOrHidden;
+- (BOOL)hidden;
+- (BOOL)isMovable;
+- (BOOL)movable;
+- (BOOL)isResizable;
+- (BOOL)resizable;
+- (BOOL)isMain;
+- (BOOL)main;
+- (BOOL)move:(id)point;
+- (BOOL)resize:(id)size;
+- (JSScreenWrapper *)screen;
+JSExportAs(doOperation, - (BOOL)doOperation:(id)op options:(id)opts);
+JSExportAs(doop, - (BOOL)doop:(id)op options:(id)opts);
+- (JSApplicationWrapper *)app;
+@end
+
+@interface JSWindowWrapper : NSObject <JSWindowWrapperExports> {
   ScreenWrapper *sw;
   AccessibilityWrapper *aw;
 }

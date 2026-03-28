@@ -96,7 +96,7 @@ var isMain = win.isMain();
 
 ### move() ###
 
-Move the window to a new location. You may use [expressions](js-expressions.md), which will be evaluated based on the screen the window is on or the `"screen"` parameter in the parameter hash. Returns `true` if the move succeeded, `false` if it did not.
+Move the window to a new location. You may use [expressions](configuration.md#expressions), which will be evaluated based on the screen the window is on or the `"screen"` parameter in the parameter hash. Returns `true` if the move succeeded, `false` if it did not.
 
 ```javascript
 // win is a window object
@@ -120,7 +120,7 @@ var isMovable = win.isMovable();
 
 ### resize() ###
 
-Resize the window. You may use [expressions](js-expressions.md), which will be evaluated based on the screen the window is on or the `"screen"` parameter in the parameter hash. Returns `true` if the resize succeeded, `false` if it did not.
+Resize the window. You may use [expressions](configuration.md#expressions), which will be evaluated based on the screen the window is on or the `"screen"` parameter in the parameter hash. Returns `true` if the resize succeeded, `false` if it did not.
 
 ```javascript
 // win is a window object

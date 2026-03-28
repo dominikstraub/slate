@@ -24,7 +24,7 @@
 
 @interface SwitchAppView : NSView {
   BOOL selected;
-  BOOL hidden;
+  BOOL appHidden;
   BOOL quitting;
   BOOL forceQuitting;
   NSRunningApplication *app;
@@ -34,7 +34,7 @@
 }
 
 @property (assign) BOOL selected;
-@property (assign) BOOL hidden;
+@property (assign, getter=isAppHidden) BOOL appHidden;
 @property (assign) BOOL quitting;
 @property (assign) BOOL forceQuitting;
 @property NSRunningApplication *app;

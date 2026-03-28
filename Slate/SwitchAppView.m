@@ -29,7 +29,7 @@ static const float HIDDEN_ALPHA = 0.2;
 static const float SHOWN_ALPHA = 1.0;
 static const float STROKE_WIDTH = -5;
 
-@synthesize selected, hidden, quitting, forceQuitting, app, iconView, textField, quittingView;
+@synthesize selected, appHidden, quitting, forceQuitting, app, iconView, textField, quittingView;
 
 static NSColor *switchFontColor = nil;
 static NSFont *switchFont = nil;
@@ -41,7 +41,7 @@ static float switchFontHeight = -1;
   self = [super initWithFrame:frame];
   if (self) {
     selected = NO;
-    hidden = NO;
+    appHidden = NO;
     quitting = NO;
     forceQuitting = NO;
     iconView = nil;
@@ -83,7 +83,7 @@ static float switchFontHeight = -1;
 
 - (void)updateApp:(NSRunningApplication *)theApp {
   [self setApp:theApp];
-  [self setHidden:[theApp isHidden]];
+  [self setAppHidden:[theApp isHidden]];
   if (iconView != nil) {
     [iconView removeFromSuperview];
   }
@@ -95,7 +95,7 @@ static float switchFontHeight = -1;
   NSImage *icon = [app icon];
   [icon setSize:NSMakeSize(iconSize, iconSize)];
   [iconView setImage:icon];
-  [iconView setAlphaValue:(hidden ? HIDDEN_ALPHA : SHOWN_ALPHA)];
+  [iconView setAlphaValue:(appHidden ? HIDDEN_ALPHA : SHOWN_ALPHA)];
   [self addSubview:iconView];
   if ([[SlateConfig getInstance] getBoolConfig:SWITCH_SHOW_TITLES]) {
     if ([[[SlateConfig getInstance] getConfig:SWITCH_ORIENTATION] isEqualToString:SWITCH_ORIENTATION_VERTICAL]) {
@@ -106,13 +106,13 @@ static float switchFontHeight = -1;
     NSMutableAttributedString *theTitle = [[NSMutableAttributedString alloc] initWithString:[theApp localizedName]];
     NSRange everything = NSMakeRange(0, [theTitle length]);
     [theTitle addAttribute:NSStrokeWidthAttributeName value:[NSNumber numberWithFloat:STROKE_WIDTH] range:everything];
-    [theTitle setAlignment:NSCenterTextAlignment range:everything];
+    [theTitle setAlignment:NSTextAlignmentCenter range:everything];
     [textField setAttributedStringValue:theTitle];
     [textField setSelectable:NO];
     [textField setEditable:NO];
     [textField setBezeled:NO];
     [textField setBordered:NO];
-    [textField setAlignment:NSCenterTextAlignment];
+    [textField setAlignment:NSTextAlignmentCenter];
     [textField setBackgroundColor:[NSColor clearColor]];
     [textField setFont:switchFont];
     [textField setTextColor:switchFontColor];
@@ -122,8 +122,8 @@ static float switchFontHeight = -1;
 }
 
 - (void)updateHidden:(BOOL)theHidden {
-  [self setHidden:theHidden];
-  [iconView setAlphaValue:(hidden ? HIDDEN_ALPHA : SHOWN_ALPHA)];
+  [self setAppHidden:theHidden];
+  [iconView setAlphaValue:(appHidden ? HIDDEN_ALPHA : SHOWN_ALPHA)];
   [self setNeedsDisplay:YES];
 }
 

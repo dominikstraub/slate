@@ -24,8 +24,6 @@
 
 @implementation JSScreenWrapper
 
-static NSDictionary *jsswJsMethods = nil;
-
 @synthesize screenId;
 @synthesize sw;
 
@@ -34,7 +32,6 @@ static NSDictionary *jsswJsMethods = nil;
   if (self) {
     [self setScreenId:0];
     [self setSw:[[ScreenWrapper alloc] init]];
-    [JSScreenWrapper setJsMethods];
   }
   return self;
 }
@@ -44,7 +41,6 @@ static NSDictionary *jsswJsMethods = nil;
   if (self) {
     [self setScreenId:_id];
     [self setSw:_sw];
-    [JSScreenWrapper setJsMethods];
   }
   return self;
 }
@@ -83,27 +79,6 @@ static NSDictionary *jsswJsMethods = nil;
 
 - (BOOL)isMain {
   return [sw isMainScreenRef:[self screenId]];
-}
-
-+ (void)setJsMethods {
-  if (jsswJsMethods == nil) {
-    jsswJsMethods = @{
-      NSStringFromSelector(@selector(screenId)): @"id",
-      NSStringFromSelector(@selector(rect)): @"rect",
-      NSStringFromSelector(@selector(visibleRect)): @"visibleRect",
-      NSStringFromSelector(@selector(vrect)): @"vrect",
-      NSStringFromSelector(@selector(isMain)): @"isMain",
-      NSStringFromSelector(@selector(main)): @"main",
-    };
-  }
-}
-
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
-  return [jsswJsMethods objectForKey:NSStringFromSelector(sel)] == NULL;
-}
-
-+ (NSString *)webScriptNameForSelector:(SEL)sel {
-  return [jsswJsMethods objectForKey:NSStringFromSelector(sel)];
 }
 
 @end

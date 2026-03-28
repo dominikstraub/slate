@@ -18,7 +18,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see http://www.gnu.org/licenses
 
-#import <Carbon/Carbon.h>
+#import "CarbonCompat.h"
 #import <Cocoa/Cocoa.h>
 
 @class SwitchOperation;
@@ -29,7 +29,7 @@
 @class Binding;
 @class GridOperation;
 
-@interface SlateAppDelegate : NSObject <NSApplicationDelegate> {
+@interface SlateAppDelegate : NSObject <NSApplicationDelegate, NSMenuItemValidation> {
 @private
   IBOutlet NSMenu *statusMenu;
   NSMenuItem *activateSnapshotItem;

@@ -32,7 +32,7 @@
 #import "SwitchOperation.h"
 #import "RunningApplications.h"
 #import "GridOperation.h"
-#import <Sparkle/SUUpdater.h>
+#import <ServiceManagement/ServiceManagement.h>
 
 @implementation SlateAppDelegate
 
@@ -48,7 +48,7 @@ static SlateAppDelegate *selfRef = nil;
 static EventHandlerRef modifiersEvent;
 
 - (IBAction)updateLaunchState {
-  if ([launchOnLoginItem state] == NSOnState) {
+  if ([launchOnLoginItem state] == NSControlStateValueOn) {
     // currently on
     [self deleteFromLoginItems];
     [self setLaunchOnLoginItemStatus];
@@ -60,15 +60,11 @@ static EventHandlerRef modifiersEvent;
 }
 
 - (IBAction)relaunch {
-  NSString *launcherSource = [[NSBundle bundleForClass:[SUUpdater class]]  pathForResource:@"relaunch" ofType:@""];
-  NSString *launcherTarget = [NSTemporaryDirectory() stringByAppendingPathComponent:[launcherSource lastPathComponent]];
   NSString *appPath = [[NSBundle mainBundle] bundlePath];
-  NSString *processID = [NSString stringWithFormat:@"%d", [[NSProcessInfo processInfo] processIdentifier]];
-
-  [[NSFileManager defaultManager] removeItemAtPath:launcherTarget error:NULL];
-  [[NSFileManager defaultManager] copyItemAtPath:launcherSource toPath:launcherTarget error:NULL];
-
-  [NSTask launchedTaskWithLaunchPath:launcherTarget arguments:[NSArray arrayWithObjects:appPath, processID, nil]];
+  NSTask *task = [[NSTask alloc] init];
+  [task setExecutableURL:[NSURL fileURLWithPath:@"/usr/bin/open"]];
+  [task setArguments:@[@"-n", @"-a", appPath]];
+  [task launchAndReturnError:nil];
   [NSApp terminate:self];
 }
 
@@ -188,7 +184,7 @@ static EventHandlerRef modifiersEvent;
     UnregisterEventHotKey([hotKeyRef pointerValue]);
   }
   // reset status image
-  [statusItem setImage:[NSImage imageNamed:@"status"]];
+  statusItem.button.image = [NSImage imageNamed:@"status"];
   currentModalKey = nil;
 }
 
@@ -258,7 +254,7 @@ static EventHandlerRef modifiersEvent;
       }
       [self setCurrentModalKey:modalKey];
       // change status image
-      [statusItem setImage:[NSImage imageNamed:@"statusActive"]];
+      statusItem.button.image = [NSImage imageNamed:@"statusActive"];
       return noErr;
     }
   }
@@ -462,8 +458,8 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
 }
 
 - (void)setLaunchOnLoginItemStatus {
-  if ([self isInLoginItems]) [launchOnLoginItem setState:NSOnState];
-  else [launchOnLoginItem setState:NSOffState];
+  if ([self isInLoginItems]) [launchOnLoginItem setState:NSControlStateValueOn];
+  else [launchOnLoginItem setState:NSControlStateValueOff];
 }
 
 - (void)awakeFromNib {
@@ -510,10 +506,7 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
 
   statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength: NSVariableStatusItemLength];
   [statusItem setMenu:statusMenu];
-  NSImage *statusImage = [NSImage imageNamed:@"status"];
-  [statusImage setTemplate:YES];
-  [statusItem setImage:statusImage];
-  [statusItem setHighlightMode:YES];
+  statusItem.button.image = [NSImage imageNamed:@"status"];
 
   // Ensure no timer exists
   @synchronized(timerLock) {
@@ -526,19 +519,14 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
   }
 
   // Check if Accessibility API is enabled
-  if (!AXAPIEnabled()) {
-    NSAlert *alert = [SlateConfig warningAlertWithKeyEquivalents: [NSArray arrayWithObjects:@"Enable", @"Quit", nil]];
-    [alert setMessageText:[NSString stringWithFormat:@"Slate cannot run without \"Access for assistive devices\". Would you like to enable it?"]];
-    [alert setInformativeText:[NSString stringWithFormat:@"You may be prompted for your administrator password."]];
-    [alert setAlertStyle:NSCriticalAlertStyle];
+  NSDictionary *options = @{(__bridge NSString *)kAXTrustedCheckOptionPrompt: @YES};
+  if (!AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options)) {
+    NSAlert *alert = [SlateConfig warningAlertWithKeyEquivalents: [NSArray arrayWithObjects:@"Quit", @"Continue", nil]];
+    [alert setMessageText:@"Slate requires Accessibility permissions to manage windows."];
+    [alert setInformativeText:@"Please grant Accessibility access in System Settings > Privacy & Security > Accessibility, then relaunch Slate."];
+    [alert setAlertStyle:NSAlertStyleCritical];
     NSInteger alertIndex = [alert runModal];
     if (alertIndex == NSAlertFirstButtonReturn) {
-      SlateLogger(@"User wants to enable Access for assistive devices");
-      NSDictionary* errorDictionary;
-      NSAppleScript* applescript = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to set UI elements enabled to true"];
-      [applescript executeAndReturnError:&errorDictionary];
-    }
-    else if (alertIndex == NSAlertSecondButtonReturn) {
       SlateLogger(@"User selected quit");
       [NSApp terminate:nil];
     }
@@ -570,84 +558,20 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
 }
 
 - (BOOL)isInLoginItems {
-  NSString * appPath = [[NSBundle mainBundle] bundlePath];
-
-  // This will retrieve the path for the application
-  // For example, /Applications/test.app
-  CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:appPath];
-
-  // Create a reference to the shared file list.
-  LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-
-  if (loginItems) {
-    UInt32 seedValue;
-    // Retrieve the list of Login Items and cast them to
-    // a NSArray so that it will be easier to iterate.
-    NSArray  *loginItemsArray = (__bridge NSArray *)LSSharedFileListCopySnapshot(loginItems, &seedValue);
-    for(NSInteger i = 0; i < [loginItemsArray count]; i++){
-      LSSharedFileListItemRef itemRef = (__bridge LSSharedFileListItemRef)[loginItemsArray objectAtIndex:i];
-      //Resolve the item with URL
-      if (LSSharedFileListItemResolve(itemRef, 0, (CFURLRef*) &url, NULL) == noErr) {
-        NSString * urlPath = [(__bridge NSURL*)url path];
-        if ([urlPath compare:appPath] == NSOrderedSame) {
-          return YES;
-        }
-      }
-    }
-  }
-  return NO;
+  return [SMAppService mainAppService].status == SMAppServiceStatusEnabled;
 }
 
 - (void)addToLoginItems {
-  NSString * appPath = [[NSBundle mainBundle] bundlePath];
-
-  // This will retrieve the path for the application
-  // For example, /Applications/test.app
-  CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:appPath];
-
-  // Create a reference to the shared file list.
-  // We are adding it to the current user only.
-  // If we want to add it all users, use
-  // kLSSharedFileListGlobalLoginItems instead of
-  // kLSSharedFileListSessionLoginItems
-  LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-  if (loginItems) {
-    //Insert an item to the list.
-    LSSharedFileListItemRef item = LSSharedFileListInsertItemURL(loginItems,
-                                                                 kLSSharedFileListItemLast, NULL, NULL,
-                                                                 url, NULL, NULL);
-    if (item){
-      CFRelease(item);
-    }
-    CFRelease(loginItems);
+  NSError *error = nil;
+  if (![[SMAppService mainAppService] registerAndReturnError:&error]) {
+    SlateLogger(@"Failed to add login item: %@", error);
   }
 }
 
 - (void)deleteFromLoginItems {
-  NSString * appPath = [[NSBundle mainBundle] bundlePath];
-
-  // This will retrieve the path for the application
-  // For example, /Applications/test.app
-  CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:appPath];
-
-  // Create a reference to the shared file list.
-  LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-
-  if (loginItems) {
-    UInt32 seedValue;
-    // Retrieve the list of Login Items and cast them to
-    // a NSArray so that it will be easier to iterate.
-    NSArray  *loginItemsArray = (__bridge NSArray *)LSSharedFileListCopySnapshot(loginItems, &seedValue);
-    for(NSInteger i = 0; i < [loginItemsArray count]; i++){
-      LSSharedFileListItemRef itemRef = (__bridge LSSharedFileListItemRef)[loginItemsArray objectAtIndex:i];
-      //Resolve the item with URL
-      if (LSSharedFileListItemResolve(itemRef, 0, (CFURLRef*) &url, NULL) == noErr) {
-        NSString * urlPath = [(__bridge NSURL*)url path];
-        if ([urlPath compare:appPath] == NSOrderedSame) {
-          LSSharedFileListItemRemove(loginItems,itemRef);
-        }
-      }
-    }
+  NSError *error = nil;
+  if (![[SMAppService mainAppService] unregisterAndReturnError:&error]) {
+    SlateLogger(@"Failed to remove login item: %@", error);
   }
 }
 

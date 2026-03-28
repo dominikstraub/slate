@@ -1,26 +1,35 @@
 # Installing Slate #
 
-**Note:** You must turn on the Accessibility API!
+## Accessibility Permissions ##
 
-When *Slate* starts it asks you if it can enable access for assistive devices. It may fail to do so. You can manually set this by checking System Preferences > Universal Access > Enable access for assistive devices. If you are on Mavericks or Yosemite, you must turn it on by checking *Slate* in System Preferences > Security & Privacy > Privacy > Accessibility.
+On first launch, Slate will ask for Accessibility permissions in System Settings > Privacy & Security > Accessibility. This is required for window management to work.
 
-## Homebrew Cask ##
+**Note:** If you previously had another version of Slate installed (e.g. the original version, or a different build), you may need to remove the old Slate entry from the Accessibility list before adding the new one.
 
-If you use [Homebrew Cask](http://caskroom.io/), install the `mattr-slate` cask:
+## Homebrew ##
+
+Install via Homebrew:
 
 ```console
-$ brew cask install mattr-slate
+$ brew install dominikstraub/tap/slate
+```
+
+To update to a newer version:
+
+```console
+$ brew update
+$ brew upgrade dominikstraub/tap/slate
 ```
 
 ## Manual Install ##
 
-Get the [latest `Slate.app`](https://github.com/mattr-/slate/releases/latest)  as a _zip_ file.
+Download the latest DMG from the [Releases](https://github.com/dominikstraub/slate/releases/latest) page, open it, and drag Slate to your Applications folder.
 
 ## Build from Source ##
 
-1. Install XCode.
-2. In the terminal, run: `git clone https://github.com/mattr-/slate.git ~/Slate`.
-3. Open `~/Slate/Slate.xcodeproj` with XCode.
+1. Install Xcode.
+2. In the terminal, run: `git clone https://github.com/dominikstraub/slate.git ~/Developer/Slate`.
+3. Open `~/Developer/Slate/Slate.xcodeproj` with Xcode.
 4. Go to **Product** → **Archive** and wait a minute.
 5. Once the Archive Organizer pops up, choose the most recently created Slate export. (It should be selected by default.)
 6. Click **Export** (on the right).

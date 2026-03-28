@@ -25,11 +25,7 @@
 static AXUIElementRef systemWideElement = NULL;
 static NSDictionary *unselectableApps = nil;
 
-// private Apple API; via:
-// https://github.com/sdegutis/hydra/blob/fb4ef150f827a5a78fa0b9ba7f75ac4e43d54860/Hydra/API/application.m#L154-L170
-typedef int CGSConnectionID;
-CG_EXTERN CGSConnectionID CGSMainConnectionID(void);
-bool CGSEventIsAppUnresponsive(CGSConnectionID cid, const ProcessSerialNumber *psn);
+
 
 @implementation AccessibilityWrapper
 
@@ -181,15 +177,16 @@ bool CGSEventIsAppUnresponsive(CGSConnectionID cid, const ProcessSerialNumber *p
   BOOL couldFocus = YES;
   CFTypeRef _window;
   pid_t focusPID = [app processIdentifier];
-  AXUIElementCopyAttributeValue(AXUIElementCreateApplication(focusPID), (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window);
+  AXUIElementRef focusAppRef = AXUIElementCreateApplication(focusPID);
+  AXUIElementCopyAttributeValue(focusAppRef, (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window);
+  CFRelease(focusAppRef);
   if (_window == NULL) return [AccessibilityWrapper focusApp:app];
   if (AXUIElementSetAttributeValue((AXUIElementRef)_window, (CFStringRef)NSAccessibilityMainAttribute, kCFBooleanTrue) != kAXErrorSuccess) {
     SlateLogger(@"ERROR: Could not change focus to window");
     couldFocus = NO;
   }
-  ProcessSerialNumber psn;
-  GetProcessForPID(focusPID, &psn);
-  SetFrontProcessWithOptions(&psn, kSetFrontProcessFrontWindowOnly);
+  NSRunningApplication *focusApp = [NSRunningApplication runningApplicationWithProcessIdentifier:focusPID];
+  [focusApp activateWithOptions:0];
   if (_window != NULL) CFRelease(_window);
   return couldFocus;
 }
@@ -201,9 +198,8 @@ bool CGSEventIsAppUnresponsive(CGSConnectionID cid, const ProcessSerialNumber *p
     couldFocus = NO;
   }
   pid_t focusPID = [AccessibilityWrapper processIdentifierOfUIElement:window];
-  ProcessSerialNumber psn;
-  GetProcessForPID(focusPID, &psn);
-  SetFrontProcessWithOptions(&psn, kSetFrontProcessFrontWindowOnly);
+  NSRunningApplication *focusApp = [NSRunningApplication runningApplicationWithProcessIdentifier:focusPID];
+  [focusApp activateWithOptions:0];
   return couldFocus;
 }
 
@@ -217,25 +213,15 @@ bool CGSEventIsAppUnresponsive(CGSConnectionID cid, const ProcessSerialNumber *p
   }
 }
 
-+ (BOOL)appIsUnresponsive:(AXUIElementRef)app {
-  pid_t pid = [AccessibilityWrapper processIdentifierOfUIElement:app];
-  if (!pid) {
-    return true;
-  }
-
-  ProcessSerialNumber psn;
-  GetProcessForPID(pid, &psn);
-
-  CGSConnectionID conn = CGSMainConnectionID();
-  return CGSEventIsAppUnresponsive(conn, &psn);
-}
-
 + (CFArrayRef)windowsInApp:(AXUIElementRef)app {
   [AccessibilityWrapper createSystemWideElement];
 
-  if ([AccessibilityWrapper appIsUnresponsive:app]) {
-    return nil;
-  }
+  // Set a short messaging timeout so AX calls to unresponsive apps
+  // fail quickly instead of blocking the main thread for seconds.
+  // This replaces the old dispatch+semaphore appIsUnresponsive: check
+  // which blocked the main thread for up to 1s per app and could cause
+  // macOS to kill the process as unresponsive.
+  AXUIElementSetMessagingTimeout(app, 1.0);
 
   CFArrayRef _windows;
   if (AXUIElementCopyAttributeValues(app, kAXWindowsAttribute, 0, 100, &_windows) == kAXErrorSuccess) {
@@ -245,12 +231,17 @@ bool CGSEventIsAppUnresponsive(CGSConnectionID cid, const ProcessSerialNumber *p
 }
 
 + (CFArrayRef)windowsInRunningApp:(NSRunningApplication *)app {
-  return [AccessibilityWrapper windowsInApp:AXUIElementCreateApplication([app processIdentifier])];
+  AXUIElementRef appRef = AXUIElementCreateApplication([app processIdentifier]);
+  CFArrayRef result = [AccessibilityWrapper windowsInApp:appRef];
+  CFRelease(appRef);
+  return result;
 }
 
 + (AXUIElementRef)focusedWindowInRunningApp:(NSRunningApplication *)app {
-  CFTypeRef _window;
-  AXUIElementCopyAttributeValue(AXUIElementCreateApplication([app processIdentifier]), (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window);
+  CFTypeRef _window = NULL;
+  AXUIElementRef appRef = AXUIElementCreateApplication([app processIdentifier]);
+  AXUIElementCopyAttributeValue(appRef, (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window);
+  CFRelease(appRef);
   return _window;
 }
 

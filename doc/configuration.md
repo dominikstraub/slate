@@ -8,11 +8,11 @@ Slate is configured using a `.slate` file in the current user's home directory. 
 
 ### JavaScript Configuration ###
 
-**NEW:** You may now use a `.slate.js` file to configure slate using JavaScript. This allows for much more complex and dynamic configurations than the normal slate configuration style below. You can check out the documentation for this [here](js-configuration.md).
+You may also use a `.slate.js` file to configure Slate using JavaScript. This allows for much more complex and dynamic configurations than the normal slate configuration style below. You can check out the documentation for this [here](js-configuration.md).
 
 ### Default Config File ###
 
-**Note:** If no `.slate` or `.slate.js` file exists in the current user's home directory, the [default config file](../Slate/default.slate) will be used.
+**Note:** If no `.slate` or `.slate.js` file exists in the current user's home directory, the [default config file](../Slate/Slate/Config/default.slate) will be used.
 
 ## Traditional Configuration Format ##
 
@@ -79,4 +79,4 @@ Operator/Function | Example
 
 ### Example Config ###
 
-You can check out an example config [here](https://github.com/jigish/dotfiles/blob/master/slate).
+You can check out an example config [here](https://github.com/jigish/dotfiles/blob/663c6a13385918739a6be1095012c889093c47c0/slate) (from the original author).

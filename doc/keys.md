@@ -1,6 +1,6 @@
 # Allowed Keys #
 
-**Note:** If you bind anything to cmd-tab or cmd-shift-tab, Slate will completely disable the default Mac OS X Application switcher!
+**Note:** If you bind anything to cmd-tab or cmd-shift-tab, Slate will completely disable the default macOS Application Switcher!
 
 * Letters
     * `a`

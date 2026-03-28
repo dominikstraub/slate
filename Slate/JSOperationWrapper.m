@@ -26,15 +26,10 @@
 
 @implementation JSOperationWrapper
 
-static NSDictionary *jsowJsMethods;
-
 @synthesize op;
 
 - (id)init {
   self = [super init];
-  if (self) {
-    [JSOperationWrapper setJsMethods];
-  }
   return self;
 }
 
@@ -59,7 +54,7 @@ static NSDictionary *jsowJsMethods;
   return self;
 }
 
-- (id)initWithName:(NSString*)name options:(WebScriptObject *)opts {
+- (id)initWithName:(NSString*)name options:(JSValue *)opts {
   self = [self init];
   if (self) {
     @try {
@@ -113,7 +108,7 @@ static NSDictionary *jsowJsMethods;
   return [[self op] doOperationWithAccessibilityWrapper:aw screenWrapper:sw];
 }
 
-- (JSOperationWrapper *)dup:(WebScriptObject *)opts {
+- (JSOperationWrapper *)dup:(JSValue *)opts {
   NSString *type = [[JSController getInstance] jsTypeof:opts];
   if (![@"object" isEqualToString:type]) {
     SlateLogger(@"   ERROR operation.dup parameter must be a hash");
@@ -130,29 +125,12 @@ static NSDictionary *jsowJsMethods;
   return [[JSOperationWrapper alloc] initWithOperation:[[self op] dup:optDict]];
 }
 
-+ (JSOperationWrapper *)operation:(NSString*)name options:(WebScriptObject *)opts {
++ (JSOperationWrapper *)operation:(NSString*)name options:(JSValue *)opts {
   return [[JSOperationWrapper alloc] initWithName:name options:opts];
 }
 
 + (JSOperationWrapper *)operationFromString:(NSString *)opString {
   return [[JSOperationWrapper alloc] initWithString:opString];
-}
-
-+ (void)setJsMethods {
-  if (jsowJsMethods == nil) {
-    jsowJsMethods = @{
-      NSStringFromSelector(@selector(run)): @"run",
-      NSStringFromSelector(@selector(dup:)): @"dup",
-    };
-  }
-}
-
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
-  return [jsowJsMethods objectForKey:NSStringFromSelector(sel)] == NULL;
-}
-
-+ (NSString *)webScriptNameForSelector:(SEL)sel {
-  return [jsowJsMethods objectForKey:NSStringFromSelector(sel)];
 }
 
 @end

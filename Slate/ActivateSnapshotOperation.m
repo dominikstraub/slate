@@ -104,8 +104,13 @@
     SlateLogger(@"I see application '%@' with pid '%d'", appName, appPID);
     AXUIElementRef appRef = AXUIElementCreateApplication(appPID);
     CFArrayRef windowsArrRef = [AccessibilityWrapper windowsInApp:appRef];
-    if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) continue;
+    if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) {
+      if (windowsArrRef) CFRelease(windowsArrRef);
+      CFRelease(appRef);
+      continue;
+    }
     CFMutableArrayRef windowsArr = CFArrayCreateMutableCopy(kCFAllocatorDefault, 0, windowsArrRef);
+    CFRelease(windowsArrRef);
     NSArray *windowSnapshots = [[snapshot apps] objectForKey:appName];
     // Check windows
     for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
@@ -138,6 +143,8 @@
       [aw moveWindow:[bestSnapshot topLeft]];
       [aw resizeWindow:[bestSnapshot size]];
     }
+    CFRelease(windowsArr);
+    CFRelease(appRef);
   }
   return YES;
 }

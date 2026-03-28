@@ -3,11 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 100;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3AA7D09116A6ED1200C81A67 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA7D09016A6ED1200C81A67 /* WebKit.framework */; };
+		0F37647D2F70552B0019B584 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F37647C2F70552B0019B584 /* JavaScriptCore.framework */; };
+		0F37647F2F70553B0019B584 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F37647E2F70553B0019B584 /* ServiceManagement.framework */; };
+		0F6987542F75CE2800AD8093 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F6987532F75CE2800AD8093 /* Assets.xcassets */; };
+		0F6987562F75D3C900AD8093 /* slate.icon in Resources */ = {isa = PBXBuildFile; fileRef = 0F6987552F75D3C900AD8093 /* slate.icon */; };
 		3AA7D09516A6EE0200C81A67 /* JSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AA7D09416A6EE0200C81A67 /* JSController.m */; };
 		3AA7D09D16A6FC9B00C81A67 /* initialize.js in Resources */ = {isa = PBXBuildFile; fileRef = 3AA7D09A16A6FAE100C81A67 /* initialize.js */; };
 		3B1E86EE16B3627A001B9090 /* JSOperationWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B1E86ED16B3627A001B9090 /* JSOperationWrapper.m */; };
@@ -49,8 +52,6 @@
 		3BA1BA6B162F4CFF0026774E /* ShellUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA1BA6A162F4CFF0026774E /* ShellUtils.m */; };
 		3BA1BA6E162F51760026774E /* TestShellUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA1BA6D162F51760026774E /* TestShellUtils.m */; };
 		3BA7485913B1D0F500CFA792 /* MathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA7485813B1D0F500CFA792 /* MathUtils.m */; };
-		3BA85C9A16276DAB00FAAF0B /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA85C9916276DAB00FAAF0B /* Sparkle.framework */; };
-		3BA85C9B16276E9E00FAAF0B /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA85C9916276DAB00FAAF0B /* Sparkle.framework */; };
 		3BADA37213A2C1ED009E21D8 /* AccessibilityWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BADA37113A2C1ED009E21D8 /* AccessibilityWrapper.m */; };
 		3BB5380413AEDA1B0005CFFC /* ScreenState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BB5380313AEDA190005CFFC /* ScreenState.m */; };
 		3BBD24BA1580206C00940ABF /* default.slate in Resources */ = {isa = PBXBuildFile; fileRef = 3BBD24B91580206C00940ABF /* default.slate */; };
@@ -67,7 +68,6 @@
 		3BE0736B16AF735A00D33DB0 /* JSWrapperUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0736A16AF735A00D33DB0 /* JSWrapperUtils.m */; };
 		3BE0736E16AFB5CA00D33DB0 /* JSOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0736D16AFB5CA00D33DB0 /* JSOperation.m */; };
 		3BE702B3161F9D5000260716 /* SequenceOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BE702B2161F9D5000260716 /* SequenceOperation.m */; };
-		3BF57C9B1621686900C0F89B /* statusActive.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3BF57C9A1621686900C0F89B /* statusActive.pdf */; };
 		3BF57C9E16216C2200C0F89B /* VisibilityOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BF57C9D16216C2200C0F89B /* VisibilityOperation.m */; };
 		3BFC8A6A15FAAD9D00B16139 /* GridOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFC8A6915FAAD9D00B16139 /* GridOperation.m */; };
 		3BFC8A6D15FABC9700B16139 /* GridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFC8A6C15FABC9600B16139 /* GridView.m */; };
@@ -77,7 +77,6 @@
 		3BFF7D7516AC7B3D00A8CB0E /* NudgeOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF7D7416AC7B3C00A8CB0E /* NudgeOperation.m */; };
 		3BFF7D7816AC7E2900A8CB0E /* ThrowOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF7D7716AC7E2800A8CB0E /* ThrowOperation.m */; };
 		3BFF7D7B16AC7FF600A8CB0E /* CornerOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF7D7A16AC7FF600A8CB0E /* CornerOperation.m */; };
-		4747E1EF13877C160005180C /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4747E1EE13877C150005180C /* icon.icns */; };
 		4786D53513882381004554B1 /* ASCIIToCode.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4786D53413882381004554B1 /* ASCIIToCode.plist */; };
 		47C4A2941384E8890066B6DE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47C4A2931384E8890066B6DE /* Cocoa.framework */; };
 		47C4A29E1384E8890066B6DE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 47C4A29C1384E8890066B6DE /* InfoPlist.strings */; };
@@ -97,7 +96,6 @@
 		47C4A2D71384F5DE0066B6DE /* ExpressionPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 47C4A2D61384F5DE0066B6DE /* ExpressionPoint.m */; };
 		5EB99A0216A7526400760915 /* ASCIIToCode_Azerty.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EB99A0116A7526400760915 /* ASCIIToCode_Azerty.plist */; };
 		7F44A9AA16621A9D00222908 /* ASCIIToCode_Colemak.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7F44A9A916621A9D00222908 /* ASCIIToCode_Colemak.plist */; };
-		B3D087D0160577FB008A7FC6 /* status.pdf in Resources */ = {isa = PBXBuildFile; fileRef = B3D087CF160577FB008A7FC6 /* status.pdf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,21 +108,12 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		3B4D0C3615A3691900B39242 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3BA85C9B16276E9E00FAAF0B /* Sparkle.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		3AA7D09016A6ED1200C81A67 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		0F37647B2F70537E0019B584 /* CarbonCompat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarbonCompat.h; sourceTree = "<group>"; };
+		0F37647C2F70552B0019B584 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		0F37647E2F70553B0019B584 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		0F6987532F75CE2800AD8093 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0F6987552F75D3C900AD8093 /* slate.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = slate.icon; sourceTree = "<group>"; };
 		3AA7D09316A6EE0200C81A67 /* JSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSController.h; sourceTree = "<group>"; };
 		3AA7D09416A6EE0200C81A67 /* JSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSController.m; sourceTree = "<group>"; };
 		3AA7D09A16A6FAE100C81A67 /* initialize.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = initialize.js; sourceTree = "<group>"; };
@@ -205,7 +194,6 @@
 		3BA1BA6D162F51760026774E /* TestShellUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestShellUtils.m; sourceTree = "<group>"; };
 		3BA7485713B1D0F500CFA792 /* MathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathUtils.h; sourceTree = "<group>"; };
 		3BA7485813B1D0F500CFA792 /* MathUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MathUtils.m; sourceTree = "<group>"; };
-		3BA85C9916276DAB00FAAF0B /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		3BADA37013A2C1ED009E21D8 /* AccessibilityWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityWrapper.h; sourceTree = "<group>"; };
 		3BADA37113A2C1ED009E21D8 /* AccessibilityWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AccessibilityWrapper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		3BB5380213AEDA190005CFFC /* ScreenState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenState.h; sourceTree = "<group>"; };
@@ -236,7 +224,6 @@
 		3BE0736D16AFB5CA00D33DB0 /* JSOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSOperation.m; sourceTree = "<group>"; };
 		3BE702B1161F9D5000260716 /* SequenceOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SequenceOperation.h; sourceTree = "<group>"; };
 		3BE702B2161F9D5000260716 /* SequenceOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SequenceOperation.m; sourceTree = "<group>"; };
-		3BF57C9A1621686900C0F89B /* statusActive.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = statusActive.pdf; path = Slate/statusActive.pdf; sourceTree = "<group>"; };
 		3BF57C9C16216C2200C0F89B /* VisibilityOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibilityOperation.h; sourceTree = "<group>"; };
 		3BF57C9D16216C2200C0F89B /* VisibilityOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisibilityOperation.m; sourceTree = "<group>"; };
 		3BFC8A6815FAAD9D00B16139 /* GridOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridOperation.h; sourceTree = "<group>"; };
@@ -255,7 +242,6 @@
 		3BFF7D7716AC7E2800A8CB0E /* ThrowOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThrowOperation.m; sourceTree = "<group>"; };
 		3BFF7D7916AC7FF500A8CB0E /* CornerOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CornerOperation.h; sourceTree = "<group>"; };
 		3BFF7D7A16AC7FF600A8CB0E /* CornerOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CornerOperation.m; sourceTree = "<group>"; };
-		4747E1EE13877C150005180C /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = Slate/icon.icns; sourceTree = "<group>"; };
 		4786D53413882381004554B1 /* ASCIIToCode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ASCIIToCode.plist; sourceTree = "<group>"; };
 		47C4A28F1384E8890066B6DE /* Slate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Slate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47C4A2931384E8890066B6DE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -289,28 +275,23 @@
 		47C4A2D61384F5DE0066B6DE /* ExpressionPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionPoint.m; sourceTree = "<group>"; };
 		5EB99A0116A7526400760915 /* ASCIIToCode_Azerty.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ASCIIToCode_Azerty.plist; sourceTree = "<group>"; };
 		7F44A9A916621A9D00222908 /* ASCIIToCode_Colemak.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ASCIIToCode_Colemak.plist; sourceTree = "<group>"; };
-		B3D087CF160577FB008A7FC6 /* status.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = status.pdf; path = Slate/status.pdf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		47C4A28C1384E8890066B6DE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
+				0F37647F2F70553B0019B584 /* ServiceManagement.framework in Frameworks */,
+				0F37647D2F70552B0019B584 /* JavaScriptCore.framework in Frameworks */,
 				47C4A2C81384E8B10066B6DE /* Carbon.framework in Frameworks */,
 				47C4A2941384E8890066B6DE /* Cocoa.framework in Frameworks */,
-				3BA85C9A16276DAB00FAAF0B /* Sparkle.framework in Frameworks */,
-				3AA7D09116A6ED1200C81A67 /* WebKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		47C4A2AC1384E8890066B6DE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				47C4A2B11384E8890066B6DE /* Cocoa.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -383,17 +364,6 @@
 				3B34F39015462323004090BB /* NSFileManager+ApplicationSupport.m */,
 			);
 			name = Categories;
-			sourceTree = "<group>";
-		};
-		4747E1F013877D260005180C /* icons */ = {
-			isa = PBXGroup;
-			children = (
-				3BF57C9A1621686900C0F89B /* statusActive.pdf */,
-				B3D087CF160577FB008A7FC6 /* status.pdf */,
-				4747E1EE13877C150005180C /* icon.icns */,
-			);
-			name = icons;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		478293E513859BA000452C07 /* Config */ = {
@@ -542,7 +512,8 @@
 		47C4A2921384E8890066B6DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3BA85C9916276DAB00FAAF0B /* Sparkle.framework */,
+				0F37647E2F70553B0019B584 /* ServiceManagement.framework */,
+				0F37647C2F70552B0019B584 /* JavaScriptCore.framework */,
 				47C4A2C71384E8B10066B6DE /* Carbon.framework */,
 				47C4A2931384E8890066B6DE /* Cocoa.framework */,
 				47C4A2951384E8890066B6DE /* Other Frameworks */,
@@ -553,7 +524,6 @@
 		47C4A2951384E8890066B6DE /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3AA7D09016A6ED1200C81A67 /* WebKit.framework */,
 				47C4A2961384E8890066B6DE /* AppKit.framework */,
 				47C4A2971384E8890066B6DE /* CoreData.framework */,
 				47C4A2981384E8890066B6DE /* Foundation.framework */,
@@ -564,7 +534,6 @@
 		47C4A2991384E8890066B6DE /* Slate */ = {
 			isa = PBXGroup;
 			children = (
-				4747E1F013877D260005180C /* icons */,
 				3BC9E97015005F5F002FD1FA /* Categories */,
 				478293E813859C0B00452C07 /* Common */,
 				3B7DDCE116AE2FEC0087CD12 /* JavaScript */,
@@ -578,6 +547,9 @@
 				47C4A2A61384E8890066B6DE /* SlateAppDelegate.m */,
 				3B3335AB14FC1EA900F72638 /* WindowInfoView.h */,
 				3B3335AC14FC1EA900F72638 /* WindowInfoView.m */,
+				0F37647B2F70537E0019B584 /* CarbonCompat.h */,
+				0F6987532F75CE2800AD8093 /* Assets.xcassets */,
+				0F6987552F75D3C900AD8093 /* slate.icon */,
 			);
 			path = Slate;
 			sourceTree = "<group>";
@@ -626,11 +598,8 @@
 				47C4A28B1384E8890066B6DE /* Sources */,
 				47C4A28C1384E8890066B6DE /* Frameworks */,
 				47C4A28D1384E8890066B6DE /* Resources */,
-				3B4D0C3615A3691900B39242 /* CopyFiles */,
 			);
 			buildRules = (
-			);
-			dependencies = (
 			);
 			name = Slate;
 			productName = Slate;
@@ -644,7 +613,6 @@
 				47C4A2AB1384E8890066B6DE /* Sources */,
 				47C4A2AC1384E8890066B6DE /* Frameworks */,
 				47C4A2AD1384E8890066B6DE /* Resources */,
-				47C4A2AE1384E8890066B6DE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -662,16 +630,18 @@
 		47C4A2861384E8890066B6DE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2640;
 			};
 			buildConfigurationList = 47C4A2891384E8890066B6DE /* Build configuration list for PBXProject "Slate" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 47C4A2841384E8890066B6DE;
+			preferredProjectObjectVersion = 100;
 			productRefGroup = 47C4A2901384E8890066B6DE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -685,56 +655,34 @@
 /* Begin PBXResourcesBuildPhase section */
 		47C4A28D1384E8890066B6DE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				47C4A29E1384E8890066B6DE /* InfoPlist.strings in Resources */,
+				0F6987562F75D3C900AD8093 /* slate.icon in Resources */,
 				47C4A2A41384E8890066B6DE /* Credits.rtf in Resources */,
 				47C4A2AA1384E8890066B6DE /* MainMenu.xib in Resources */,
-				4747E1EF13877C160005180C /* icon.icns in Resources */,
 				4786D53513882381004554B1 /* ASCIIToCode.plist in Resources */,
 				3B65CF251576CDF10063D298 /* ASCIIToCode_Dvorak.plist in Resources */,
 				3BBD24BA1580206C00940ABF /* default.slate in Resources */,
-				B3D087D0160577FB008A7FC6 /* status.pdf in Resources */,
-				3BF57C9B1621686900C0F89B /* statusActive.pdf in Resources */,
 				7F44A9AA16621A9D00222908 /* ASCIIToCode_Colemak.plist in Resources */,
 				5EB99A0216A7526400760915 /* ASCIIToCode_Azerty.plist in Resources */,
 				3B38E04816AB8BBF00603901 /* underscore.js in Resources */,
 				3BE0736816AF3C9B00D33DB0 /* utils.js in Resources */,
+				0F6987542F75CE2800AD8093 /* Assets.xcassets in Resources */,
 				3AA7D09D16A6FC9B00C81A67 /* initialize.js in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		47C4A2AD1384E8890066B6DE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				47C4A2B91384E8890066B6DE /* InfoPlist.strings in Resources */,
 				47C4A2BC1384E8890066B6DE /* SlateTests.h in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		47C4A2AE1384E8890066B6DE /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		47C4A28B1384E8890066B6DE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				47C4A2A11384E8890066B6DE /* main.m in Sources */,
 				47C4A2A71384E8890066B6DE /* SlateAppDelegate.m in Sources */,
@@ -799,11 +747,9 @@
 				3BE0736E16AFB5CA00D33DB0 /* JSOperation.m in Sources */,
 				3B1E86EE16B3627A001B9090 /* JSOperationWrapper.m in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		47C4A2AB1384E8890066B6DE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				47C4A2BE1384E8890066B6DE /* SlateTests.m in Sources */,
 				3B8B5527161A1FDF00E21A6C /* TestNSString+Indicies.m in Sources */,
@@ -813,7 +759,6 @@
 				3BA1BA65162E01A30026774E /* TestStringTokenizer.m in Sources */,
 				3BA1BA6E162F51760026774E /* TestShellUtils.m in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -861,18 +806,36 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		47C4A2BF1384E8890066B6DE /* Debug */ = {
+		47C4A2BF1384E8890066B6DE /* Debug configuration for PBXProject "Slate" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = B3ZY68PVHL;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -883,24 +846,42 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Debug;
 		};
-		47C4A2C01384E8890066B6DE /* Release */ = {
+		47C4A2C01384E8890066B6DE /* Release configuration for PBXProject "Slate" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = B3ZY68PVHL;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -908,21 +889,34 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Release;
 		};
-		47C4A2C21384E8890066B6DE /* Debug */ = {
+		47C4A2C21384E8890066B6DE /* Debug configuration for PBXNativeTarget "Slate" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = slate;
+				AUTOMATION_APPLE_EVENTS = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = "tmp/$(PROJECT_NAME).dst";
+				CURRENT_PROJECT_VERSION = 3;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -932,73 +926,120 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Slate/Slate-Prefix.pch";
 				INFOPLIST_FILE = "Slate/Slate-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Slate;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.3;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.slate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
-		47C4A2C31384E8890066B6DE /* Release */ = {
+		47C4A2C31384E8890066B6DE /* Release configuration for PBXNativeTarget "Slate" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = slate;
+				AUTOMATION_APPLE_EVENTS = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 3;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = "tmp/$(PROJECT_NAME).dst";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Slate/Slate-Prefix.pch";
 				INFOPLIST_FILE = "Slate/Slate-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Slate;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.3;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.slate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
-		47C4A2C51384E8890066B6DE /* Debug */ = {
+		47C4A2C51384E8890066B6DE /* Debug configuration for PBXNativeTarget "SlateTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Slate.app/Contents/MacOS/Slate";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SlateTests/SlateTests-Prefix.pch";
 				INFOPLIST_FILE = "SlateTests/SlateTests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.slate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Debug;
 		};
-		47C4A2C61384E8890066B6DE /* Release */ = {
+		47C4A2C61384E8890066B6DE /* Release configuration for PBXNativeTarget "SlateTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Slate.app/Contents/MacOS/Slate";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SlateTests/SlateTests-Prefix.pch";
 				INFOPLIST_FILE = "SlateTests/SlateTests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.slate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Release;
@@ -1009,28 +1050,25 @@
 		47C4A2891384E8890066B6DE /* Build configuration list for PBXProject "Slate" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				47C4A2BF1384E8890066B6DE /* Debug */,
-				47C4A2C01384E8890066B6DE /* Release */,
+				47C4A2BF1384E8890066B6DE /* Debug configuration for PBXProject "Slate" */,
+				47C4A2C01384E8890066B6DE /* Release configuration for PBXProject "Slate" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		47C4A2C11384E8890066B6DE /* Build configuration list for PBXNativeTarget "Slate" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				47C4A2C21384E8890066B6DE /* Debug */,
-				47C4A2C31384E8890066B6DE /* Release */,
+				47C4A2C21384E8890066B6DE /* Debug configuration for PBXNativeTarget "Slate" */,
+				47C4A2C31384E8890066B6DE /* Release configuration for PBXNativeTarget "Slate" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		47C4A2C41384E8890066B6DE /* Build configuration list for PBXNativeTarget "SlateTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				47C4A2C51384E8890066B6DE /* Debug */,
-				47C4A2C61384E8890066B6DE /* Release */,
+				47C4A2C51384E8890066B6DE /* Debug configuration for PBXNativeTarget "SlateTests" */,
+				47C4A2C61384E8890066B6DE /* Release configuration for PBXNativeTarget "SlateTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */

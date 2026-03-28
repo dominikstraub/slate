@@ -61,7 +61,7 @@ Example:
 var snapshotName = "omgSnapshotsAreCool";
 slate.operation("snapshot", { "name" : snapshotName });
 
-// Default the snapshot to activate when Slate sees 2 mointors
+// Default the snapshot to activate when Slate sees 2 monitors
 slate.default("2", snapshotName);
 ```
 
@@ -72,7 +72,7 @@ Simply call default with a screen configuration and a function to be run when Sl
 Example:
 
 ```
-// Default the function to run when Slate sees 2 mointors with the resolutions
+// Default the function to run when Slate sees 2 monitors with the resolutions
 // "1680x1050" and "2560x1440".
 slate.default(["1680x1050","2560x1440"], function() {
   // Cycle through each app

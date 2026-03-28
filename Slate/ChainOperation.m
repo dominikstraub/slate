@@ -25,7 +25,7 @@
 #import "Constants.h"
 #import "SlateLogger.h"
 #import "JSController.h"
-#import <WebKit/WebKit.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import "JSOperation.h"
 
 @implementation ChainOperation
@@ -125,7 +125,7 @@
     NSMutableArray *ops = [NSMutableArray array];
     for (id key in value) {
       Operation *op = nil;
-      if ([key isKindOfClass:[WebScriptObject class]]) {
+      if ([key isKindOfClass:[JSValue class]]) {
         op = [JSOperation jsOperationWithFunction:key];
       } else if ([key isKindOfClass:[Operation class]]) {
         op = key;

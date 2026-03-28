@@ -20,7 +20,7 @@
 
 #import "JSInfoWrapper.h"
 #import "ScreenWrapper.h"
-#import <WebKit/WebKit.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import "JSWindowWrapper.h"
 #import "JSApplicationWrapper.h"
 #import "AccessibilityWrapper.h"
@@ -35,8 +35,6 @@
 @synthesize sw, aw;
 
 static JSInfoWrapper *_instance = nil;
-static NSDictionary *jsiwJsMethods;
-
 + (JSInfoWrapper *)getInstance {
   @synchronized([JSInfoWrapper class]) {
     if (!_instance)
@@ -50,7 +48,6 @@ static NSDictionary *jsiwJsMethods;
   if (self) {
     [self setAw:[[AccessibilityWrapper alloc] init]];
     [self setSw:[[ScreenWrapper alloc] init]];
-    [JSInfoWrapper setJsMethods];
   }
   return self;
 }
@@ -60,7 +57,6 @@ static NSDictionary *jsiwJsMethods;
   if (self) {
     [self setAw:_aw];
     [self setSw:_sw];
-    [JSInfoWrapper setJsMethods];
   }
   return self;
 }
@@ -99,14 +95,14 @@ static NSDictionary *jsiwJsMethods;
   return [[JSScreenWrapper alloc] initWithScreenId:[sw getScreenRefIdForPoint:[p pointValue]] screenWrapper:sw];
 }
 
-- (void)eapp:(id)func {
+- (void)eapp:(JSValue *)func {
   [self eachApp:func];
 }
 
-- (void)eachApp:(id)func {
+- (void)eachApp:(JSValue *)func {
   for (NSRunningApplication *runningApp in [RunningApplications getInstance]) {
-    [[JSController getInstance] runFunction:func withArg:[[JSApplicationWrapper alloc] initWithRunningApplication:runningApp
-                                                                                                    screenWrapper:sw]];
+    [func callWithArguments:@[[[JSApplicationWrapper alloc] initWithRunningApplication:runningApp
+                                                                        screenWrapper:sw]]];
   }
 }
 
@@ -168,56 +164,24 @@ static NSDictionary *jsiwJsMethods;
   return [sw getScreenCount];
 }
 
-- (void)escreen:(id)func {
+- (void)escreen:(JSValue *)func {
   [self eachScreen:func];
 }
 
-- (void)eachScreen:(id)func {
+- (void)eachScreen:(JSValue *)func {
   for (NSInteger i = 0; i < [sw getScreenCount]; i++) {
-    [[JSController getInstance] runFunction:func withArg:[[JSScreenWrapper alloc] initWithScreenId:i
-                                                                                     screenWrapper:sw]];
+    [func callWithArguments:@[[[JSScreenWrapper alloc] initWithScreenId:i
+                                                         screenWrapper:sw]]];
   }
 }
 
 - (id)jsMethods {
-  NSMutableArray *methods = [[jsiwJsMethods allValues] mutableCopy];
-  [methods removeObject:@"jsMethods"];
+  NSArray *methods = @[@"window", @"app", @"screen", @"eachApp", @"eapp",
+                       @"windowUnderPoint", @"wup", @"isRectOffScreen", @"rectoff",
+                       @"isPointOffScreen", @"pntoff", @"screenForRef", @"screenr",
+                       @"screenCount", @"screenc", @"screenUnderPoint", @"sup",
+                       @"eachScreen", @"escreen"];
   return [[JSController getInstance] marshall:methods];
-}
-
-+ (void)setJsMethods {
-  if (jsiwJsMethods == nil) {
-    jsiwJsMethods = @{
-      NSStringFromSelector(@selector(window)): @"window",
-      NSStringFromSelector(@selector(app)): @"app",
-      NSStringFromSelector(@selector(screen)): @"screen",
-      NSStringFromSelector(@selector(eachApp:)): @"eachApp",
-      NSStringFromSelector(@selector(eapp:)): @"eapp",
-      NSStringFromSelector(@selector(windowUnderPoint:)): @"windowUnderPoint",
-      NSStringFromSelector(@selector(wup:)): @"wup",
-      NSStringFromSelector(@selector(isRectOffScreen:)): @"isRectOffScreen",
-      NSStringFromSelector(@selector(rectoff:)): @"rectoff",
-      NSStringFromSelector(@selector(isPointOffScreen:)): @"isPointOffScreen",
-      NSStringFromSelector(@selector(pntoff:)): @"pntoff",
-      NSStringFromSelector(@selector(screenForRef:)): @"screenForRef",
-      NSStringFromSelector(@selector(screenr:)): @"screenr",
-      NSStringFromSelector(@selector(screenCount)): @"screenCount",
-      NSStringFromSelector(@selector(screenc)): @"screenc",
-      NSStringFromSelector(@selector(screenUnderPoint:)): @"screenUnderPoint",
-      NSStringFromSelector(@selector(sup:)): @"sup",
-      NSStringFromSelector(@selector(eachScreen:)): @"eachScreen",
-      NSStringFromSelector(@selector(escreen:)): @"escreen",
-      NSStringFromSelector(@selector(jsMethods)): @"jsMethods",
-    };
-  }
-}
-
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
-  return [jsiwJsMethods objectForKey:NSStringFromSelector(sel)] == NULL;
-}
-
-+ (NSString *)webScriptNameForSelector:(SEL)sel {
-  return [jsiwJsMethods objectForKey:NSStringFromSelector(sel)];
 }
 
 @end

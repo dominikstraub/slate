@@ -39,7 +39,7 @@
 #import "ShellOperation.h"
 #import "UndoOperation.h"
 #import "SlateConfig.h"
-#import <WebKit/WebKit.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import "JSController.h"
 #import "CornerOperation.h"
 #import "ThrowOperation.h"
@@ -110,7 +110,7 @@
         [opt isKindOfClass:[NSDictionary class]] || [opt isKindOfClass:[NSArray class]]) {
       [self.options setObject:opt forKey:key];
       [self parseOption:key value:[[self options] objectForKey:key]];
-    } else if ([opt isKindOfClass:[WebScriptObject class]]) {
+    } else if ([opt isKindOfClass:[JSValue class]]) {
       // assume this is a function (otherwise it would have been converted)
       NSString *jsKey = [[JSController getInstance] addCallableFunction:opt];
       [self.dynamicOptions setObject:jsKey forKey:key];

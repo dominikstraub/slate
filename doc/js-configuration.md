@@ -1,6 +1,6 @@
 # Slate JavaScript Configuration #
 
-This page documents the JavaScript config feature of Slate. This feature is available in Slate version 1.0.19 and above. It is advised that you update to the latest Slate as some of the APIs may have changed since 1.0.19.
+This page documents the JavaScript config feature of Slate.
 
 Many thanks to [mgax](https://github.com/mgax) for the initial code.
 
@@ -60,8 +60,6 @@ Definitely verbose, but they can do **much** more than normal configs. Yum.
 
 ## Main Course ##
 
-**Disclaimer:** This functionality is relatively new and has not been tested extensively. It is definitely possible that some things don't work as expected. Please open an issue if you run into problems.
-
 To use JavaScript configs, create the file `.slate.js` in your home directory. You can use `.slate.js` alongside your `.slate` file if you like and Slate will load both (`.slate` first, then `.slate.js`). You can also use only the `.slate.js` if you want. All JavaScript configs should go into the `.slate.js` file.
 
 In the `.slate.js` file you will have access to the following global objects:
@@ -113,11 +111,11 @@ Set multiple Slate [global config options](directive-config.md#global-config-opt
 var object = slate.operation(name, params);
 ```
 
-Create a Slate [operation](https://github.com/jigish/slate/wiki/Operations).
+Create a Slate [operation](https://github.com/dominikstraub/slate/wiki/Operations).
 
 * `object` is the created operation. can be used to reference this operation in other APIs.
 * `name` is the operation name. must be a String. e.g. `"move"`.
-* `params` is the operation's parameters. must be a Hash. more information on the parameters that operations take can be found [here](https://github.com/jigish/slate/wiki/Operations).
+* `params` is the operation's parameters. must be a Hash. more information on the parameters that operations take can be found [here](https://github.com/dominikstraub/slate/wiki/Operations).
 
 **Alias:** `S.operation` or `S.op`
 
@@ -147,7 +145,7 @@ Bind a [keystroke](keys.md) to an action.
 
 **Alias:** `S.bind` or `S.bnd`
 
-Here is an [explanation of how keystrokes work](https://github.com/jigish/slate/wiki/Keystrokes).
+Here is an [explanation of how keystrokes work](https://github.com/dominikstraub/slate/wiki/Keystrokes).
 
 #### slate.bindAll ####
 
@@ -217,8 +215,8 @@ slate.on(event, callback);
 
 Listen to an event.
 
-* `event` is the name of the [event](https://github.com/jigish/slate/wiki/Events) to listen for.
-* `callback` is the function to execute when the [event](https://github.com/jigish/slate/wiki/Events) occurs.
+* `event` is the name of the [event](https://github.com/dominikstraub/slate/wiki/Events) to listen for.
+* `callback` is the function to execute when the [event](https://github.com/dominikstraub/slate/wiki/Events) occurs.
 
 ### Slate Info APIs ###
 
@@ -404,7 +402,7 @@ Cycle through each [screen](js-object-screen.md).
 slate.log(message);
 ```
 
-Log a message to the OS X debug console.
+Log a message to the macOS Console.
 
 * `message` - the message to log. must be a String.
 
@@ -412,4 +410,4 @@ Log a message to the OS X debug console.
 
 ## Example JavaScript Config ##
 
-Here is my own [`.slate.js`](https://github.com/jigish/dotfiles/blob/master/slate.js).
+You can check out an example config [here](https://github.com/jigish/dotfiles/blob/663c6a13385918739a6be1095012c889093c47c0/slate.js) (from the original author).

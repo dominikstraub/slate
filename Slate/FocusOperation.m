@@ -113,13 +113,18 @@
     AXUIElementRef appToFocus;
     BOOL foundFocus = NO;
     BOOL foundFocusInSameApp = NO;
+    NSMutableArray *allocatedAppRefs = [NSMutableArray array];
     for (NSRunningApplication *runningApp in [RunningApplications getInstance]) {
       pid_t appPID = [runningApp processIdentifier];
       SlateLogger(@"I see application '%@' with pid '%d'", [runningApp localizedName], appPID);
 
       AXUIElementRef appRef = AXUIElementCreateApplication(appPID);
+      [allocatedAppRefs addObject:[NSValue valueWithPointer:appRef]];
       CFArrayRef windows = [AccessibilityWrapper windowsInApp:appRef];
-      if (!windows || CFArrayGetCount(windows) == 0) continue;
+      if (!windows || CFArrayGetCount(windows) == 0) {
+        if (windows) CFRelease(windows);
+        continue;
+      }
 
       for (NSInteger i = 0; i < CFArrayGetCount(windows); i++) {
         AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appRef window:CFArrayGetValueAtIndex(windows, i)];
@@ -169,18 +174,22 @@
           foundFocus = YES;
         }
       }
+      CFRelease(windows);
       // check if same app && foundFocus && prefer_same_app
       if(foundFocusInSameApp && [AccessibilityWrapper processIdentifierOfUIElement:[caAW app]] == appPID && [[SlateConfig getInstance] getBoolConfig:FOCUS_PREFER_SAME_APP]) {
         AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appToFocus window:windowToFocus];
         [aw focus];
+        for (NSValue *v in allocatedAppRefs) CFRelease([v pointerValue]);
         return YES;
       }
     }
     if (foundFocus) {
       AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appToFocus window:windowToFocus];
       [aw focus];
+      for (NSValue *v in allocatedAppRefs) CFRelease([v pointerValue]);
       return YES;
     }
+    for (NSValue *v in allocatedAppRefs) CFRelease([v pointerValue]);
     focusCheckWidth += [[SlateConfig getInstance] getIntegerConfig:FOCUS_CHECK_WIDTH];
   }
   return NO;

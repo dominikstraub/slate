@@ -19,24 +19,30 @@
 //  along with this program.  If not, see http://www.gnu.org/licenses
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WebKit.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 
 @class AccessibilityWrapper;
 @class ScreenWrapper;
 @class Operation;
+@class JSOperationWrapper;
 
-@interface JSOperationWrapper : NSObject {
+@protocol JSOperationWrapperExports <JSExport>
+- (BOOL)run;
+- (JSOperationWrapper *)dup:(JSValue *)opts;
+@end
+
+@interface JSOperationWrapper : NSObject <JSOperationWrapperExports> {
   Operation *op;
 }
 
 @property (strong) Operation *op;
 
 - (BOOL)run;
-- (JSOperationWrapper *)dup:(WebScriptObject *)opts;
+- (JSOperationWrapper *)dup:(JSValue *)opts;
 - (BOOL)doOperation;
 - (BOOL)doOperationWithAccessibilityWrapper:(AccessibilityWrapper *)aw screenWrapper:(ScreenWrapper *)sw;
 
-+ (JSOperationWrapper *)operation:(NSString*)name options:(WebScriptObject *)opts;
++ (JSOperationWrapper *)operation:(NSString*)name options:(JSValue *)opts;
 + (JSOperationWrapper *)operationFromString:(NSString *)opString;
 
 @end

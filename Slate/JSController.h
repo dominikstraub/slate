@@ -18,12 +18,27 @@
 //  along with this program.  If not, see http://www.gnu.org/licenses
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WebKit.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import "Operation.h"
 
-@interface JSController : NSObject {
-  WebView *webView;
-  WebScriptObject *scriptObject;
+@protocol JSControllerExports <JSExport>
+JSExportAs(log, - (void)log:(id)msg);
+JSExportAs(bindFunction, - (void)bindFunction:(NSString *)hotkey callback:(JSValue *)callback repeat:(id)_repeat);
+JSExportAs(bindNative, - (void)bindNative:(NSString *)hotkey callback:(JSValue *)opWrapper repeat:(id)_repeat);
+JSExportAs(configFunction, - (void)configFunction:(NSString *)key callback:(JSValue *)callback);
+JSExportAs(configNative, - (void)configNative:(NSString *)key callback:(id)callback);
+JSExportAs(doOperation, - (BOOL)doOperation:(NSString *)op options:(id)opts);
+JSExportAs(operation, - (JSValue *)operation:(NSString *)name options:(JSValue *)opts);
+- (JSValue *)operationFromString:(NSString *)opString;
+- (BOOL)source:(NSString *)path;
+JSExportAs(layout, - (NSString *)layout:(NSString *)name hash:(JSValue *)hash);
+JSExportAs(default, - (void)default:(id)config toAction:(id)_action);
+JSExportAs(shell, - (NSString *)shell:(NSString *)commandAndArgs wait:(NSNumber *)wait path:(id)path);
+JSExportAs(on, - (void)on:(NSString *)what do:(JSValue *)callback);
+@end
+
+@interface JSController : NSObject <JSControllerExports> {
+  JSContext *jsContext;
   NSMutableDictionary *functions;
   BOOL inited;
   NSMutableDictionary *eventCallbacks;
@@ -33,13 +48,17 @@
 
 - (BOOL)loadConfigFileWithPath:(NSString *)path;
 - (void)runCallbacks:(NSString *)what payload:(id)payload;
-- (NSString *)addCallableFunction:(WebScriptObject *)function;
+- (NSString *)addCallableFunction:(JSValue *)function;
 - (id)runCallableFunction:(NSString *)key;
-- (id)runFunction:(WebScriptObject*)function;
-- (id)runFunction:(WebScriptObject *)function withArg:(id)arg;
+- (id)runFunction:(JSValue *)function;
+- (id)runFunction:(JSValue *)function withArg:(id)arg;
+- (id)runFunction:(JSValue *)function withArg:(id)arg secondArg:(id)arg2;
 - (id)unmarshall:(id)obj;
 - (id)marshall:(id)obj;
-- (NSString *)jsTypeof:(WebScriptObject *)obj;
+- (NSString *)jsTypeof:(id)obj;
+- (JSValue *)getJsArray:(NSArray *)arr;
+- (JSValue *)getJsArray;
+- (JSValue *)getJsHash;
 + (JSController *)getInstance;
 
 @end

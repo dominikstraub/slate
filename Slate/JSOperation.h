@@ -19,16 +19,16 @@
 //  along with this program.  If not, see http://www.gnu.org/licenses
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WebKit.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import "Operation.h"
 
 @interface JSOperation : Operation {
-  WebScriptObject *function;
+  JSValue *function;
 }
 
-@property (strong) WebScriptObject *function;
+@property (strong) JSValue *function;
 
-- (id)initWithFunction:(WebScriptObject *)_function;
-+ (id)jsOperationWithFunction:(WebScriptObject *)function;
+- (id)initWithFunction:(JSValue *)_function;
++ (id)jsOperationWithFunction:(JSValue *)function;
 
 @end

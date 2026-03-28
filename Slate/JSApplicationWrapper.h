@@ -19,11 +19,22 @@
 //  along with this program.  If not, see http://www.gnu.org/licenses
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 
 @class AccessibilityWrapper;
 @class ScreenWrapper;
 
-@interface JSApplicationWrapper : NSObject {
+@protocol JSApplicationWrapperExports <JSExport>
+- (pid_t)pid;
+- (NSString *)bundleIdentifier;
+- (NSString *)name;
+- (id)mainWindow;
+- (id)mwindow;
+- (void)eachWindow:(JSValue *)funcOrOp;
+- (void)ewindow:(JSValue *)funcOrOp;
+@end
+
+@interface JSApplicationWrapper : NSObject <JSApplicationWrapperExports> {
   AccessibilityWrapper *aw;
   ScreenWrapper *sw;
   NSRunningApplication *app;

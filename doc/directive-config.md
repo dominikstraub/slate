@@ -48,7 +48,7 @@ The following descriptions are for the JavaScript configs. If you are using the 
 #### <a name="orderScreensLeftToRight"/>`orderScreensLeftToRight` ####
 - **type:** Boolean
 - **default:** `true`
-- When this is `true`, monitors will be ordered from left to right by X coordinate (if two X coordinates are the same, then the lowest Y coordinate will be first). When this is `false`, screens will be ordered according to the internal Mac OS X ordering which changes depending on which screen was plugged in first. If this is `false`, you can force ordering of screens by prefixing the screen ID with `ordered:`.
+- When this is `true`, monitors will be ordered from left to right by X coordinate (if two X coordinates are the same, then the lowest Y coordinate will be first). When this is `false`, screens will be ordered according to the internal macOS ordering which changes depending on which screen was plugged in first. If this is `false`, you can force ordering of screens by prefixing the screen ID with `ordered:`.
 
 #### <a name="keyboardLayout"/>`keyboardLayout` ####
 - **type:** String. Must be one of `"dvorak"`, `"colemak"`, `"azerty"` or `"qwerty"`.

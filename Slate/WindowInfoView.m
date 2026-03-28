@@ -62,8 +62,13 @@
     // Yes, I am aware that the following blocks are inefficient. Deal with it.
     AXUIElementRef appRef = AXUIElementCreateApplication(appPID);
     CFArrayRef windowsArrRef = [AccessibilityWrapper windowsInApp:appRef];
-    if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) continue;
+    if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) {
+      if (windowsArrRef) CFRelease(windowsArrRef);
+      CFRelease(appRef);
+      continue;
+    }
     CFMutableArrayRef windowsArr = CFArrayCreateMutableCopy(kCFAllocatorDefault, 0, windowsArrRef);
+    CFRelease(windowsArrRef);
     for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
       SlateLogger(@" Printing Window: %@", [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)]);
       NSString *title = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];
@@ -75,6 +80,8 @@
       NSPoint tl = [sw convertTopLeftToScreenRelative:badTL screen:badScreenID];
       text = [text stringByAppendingFormat:@"  Window: '%@'\n    Screen ID (Left to Right): %ld\n    Size: (%ld, %ld)\n    Top Left: (screenOriginX+%ld, screenOriginY+%ld)\n", title, screenID, (NSInteger)size.width, (NSInteger)size.height, (NSInteger)tl.x, (NSInteger)tl.y];
     }
+    CFRelease(windowsArr);
+    CFRelease(appRef);
   }
   [self setString:text];
 }

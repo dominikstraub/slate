@@ -643,25 +643,6 @@
                 <menuItem isSeparatorItem="YES" id="655">
                     <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                 </menuItem>
-                <menuItem isSeparatorItem="YES" id="149">
-                    <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                </menuItem>
-                <menuItem title="Check for Updates..." id="659">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="checkForUpdates:" target="657" id="660"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Automatically Check for Updates" id="668">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <binding destination="657" name="value" keyPath="automaticallyChecksForUpdates" id="674">
-                            <dictionary key="options">
-                                <bool key="NSConditionallySetsEnabled" value="NO"/>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </menuItem>
                 <menuItem isSeparatorItem="YES" id="661"/>
                 <menuItem title="Quit Slate" id="563">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -776,7 +757,7 @@
             </view>
             <point key="canvasLocation" x="1819" y="755"/>
         </window>
-        <customObject id="657" customClass="SUUpdater"/>
+        <!-- SUUpdater removed (Sparkle unlinked) -->
         <userDefaultsController representsSharedInstance="YES" id="665"/>
     </objects>
 </document>

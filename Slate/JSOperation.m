@@ -38,7 +38,7 @@
   return self;
 }
 
-- (id)initWithFunction:(WebScriptObject *)_function {
+- (id)initWithFunction:(JSValue *)_function {
   self = [super init];
   if (self) {
     [self setOpName:@"js"];
@@ -70,10 +70,10 @@
 }
 
 - (BOOL)testOperation {
-  return function != nil && [@"function" isEqualToString:[[JSController getInstance] jsTypeof:function]];
+  return function != nil && ![function isUndefined] && [@"function" isEqualToString:[[JSController getInstance] jsTypeof:function]];
 }
 
-+ (JSOperation *)jsOperationWithFunction:(WebScriptObject*)function {
++ (JSOperation *)jsOperationWithFunction:(JSValue *)function {
   return [[JSOperation alloc] initWithFunction:function];
 }
 

@@ -170,7 +170,7 @@ static const UInt32 ESC_HINT_ID = 10001;
   if ([hints objectForKey:currentHintNumber] == nil) {
     SlateLogger(@"        New Window!");
     NSWindow *window = [[HintWindow alloc] initWithContentRect:frame
-                                                     styleMask:NSBorderlessWindowMask
+                                                     styleMask:NSWindowStyleMaskBorderless
                                                        backing:NSBackingStoreBuffered
                                                          defer:NO
                                                         screen:screen];
@@ -276,13 +276,19 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
       SlateLogger(@"I see application '%@' with pid '%d'", [app localizedName], appPID);
       AXUIElementRef appRef = AXUIElementCreateApplication(appPID);
       CFArrayRef windowsArr = [AccessibilityWrapper windowsInApp:appRef];
-      if (!windowsArr || CFArrayGetCount(windowsArr) == 0) continue;
+      if (!windowsArr || CFArrayGetCount(windowsArr) == 0) {
+        if (windowsArr) CFRelease(windowsArr);
+        CFRelease(appRef);
+        continue;
+      }
       for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
         NSString *title = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];
         if (title == nil || [EMPTY isEqualToString:title]) continue; // skip empty title windows because they are invisible
         SlateLogger(@"  Hinting Window: %@", title);
         [self createHintWindowFor:CFArrayGetValueAtIndex(windowsArr, i) inApp:appRef screenWrapper:sw];
       }
+      CFRelease(windowsArr);
+      CFRelease(appRef);
     }
   } else if ([[[SlateConfig getInstance] getConfig:WINDOW_HINTS_ORDER] isEqualToString:WINDOW_HINTS_ORDER_PERSIST]) {
     // same hint always
@@ -291,7 +297,11 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
       SlateLogger(@"I see application '%@' with pid '%d'", [app localizedName], appPID);
       AXUIElementRef appRef = AXUIElementCreateApplication(appPID);
       CFArrayRef windowsArr = [AccessibilityWrapper windowsInApp:appRef];
-      if (!windowsArr || CFArrayGetCount(windowsArr) == 0) continue;
+      if (!windowsArr || CFArrayGetCount(windowsArr) == 0) {
+        if (windowsArr) CFRelease(windowsArr);
+        CFRelease(appRef);
+        continue;
+      }
       for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
         NSString *title = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];
         if (title == nil || [EMPTY isEqualToString:title]) continue; // skip empty title windows because they are invisible
@@ -305,6 +315,8 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
           break;
         }
       }
+      CFRelease(windowsArr);
+      CFRelease(appRef);
     }
   } else {
     // custom sort order
@@ -317,6 +329,8 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
       if (windowsArr != nil && windowsArr != NULL && CFArrayGetCount(windowsArr) > 0) {
         CFArrayAppendArray(allWindows, windowsArr, CFRangeMake(0, CFArrayGetCount(windowsArr)));
       }
+      if (windowsArr) CFRelease(windowsArr);
+      CFRelease(appRef);
     }
     // check which custom order and sort accordingly. if someone was stupid and entered a bad config, do nothing.
     if ([[[SlateConfig getInstance] getConfig:WINDOW_HINTS_ORDER] isEqualToString:WINDOW_HINTS_ORDER_LEFT_TO_RIGHT]) {
@@ -329,10 +343,15 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
       NSString *title = [AccessibilityWrapper getTitle:_window];
       AXUIElementRef appRef = [AccessibilityWrapper applicationForElement:(AXUIElementRef)_window];
       BOOL isWindowMinimizedOrHidden = [AccessibilityWrapper isWindowMinimizedOrHidden:_window inApp:appRef];
-      if (title == nil || isWindowMinimizedOrHidden) continue; // skip nil title and minimized/hidden windows because they are invisible
+      if (title == nil || isWindowMinimizedOrHidden) {
+        CFRelease(appRef);
+        continue; // skip nil title and minimized/hidden windows because they are invisible
+      }
       SlateLogger(@"  Hinting Window: %@", title);
       [self createHintWindowFor:(AXUIElementRef)_window inApp:appRef screenWrapper:sw];
+      CFRelease(appRef);
     }
+    CFRelease(allWindows);
   }
 
   // Register the escape hotkey

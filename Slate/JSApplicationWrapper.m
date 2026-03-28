@@ -27,8 +27,6 @@
 
 @implementation JSApplicationWrapper
 
-static NSDictionary *jsawJsMethods;
-
 @synthesize aw, sw, app;
 
 - (id)init {
@@ -37,7 +35,6 @@ static NSDictionary *jsawJsMethods;
     [self setAw:[[AccessibilityWrapper alloc] init]];
     [self setSw:[[ScreenWrapper alloc] init]];
     [self setApp:[NSRunningApplication runningApplicationWithProcessIdentifier:[aw processIdentifier]]];
-    [JSApplicationWrapper setJsMethods];
   }
   return self;
 }
@@ -48,7 +45,6 @@ static NSDictionary *jsawJsMethods;
     [self setAw:_aw];
     [self setSw:_sw];
     [self setApp:[NSRunningApplication runningApplicationWithProcessIdentifier:[aw processIdentifier]]];
-    [JSApplicationWrapper setJsMethods];
   }
   return self;
 }
@@ -59,7 +55,6 @@ static NSDictionary *jsawJsMethods;
     [self setApp:_app];
     [self setAw:nil];
     [self setSw:_sw];
-    [JSApplicationWrapper setJsMethods];
   }
   return self;
 }
@@ -86,54 +81,41 @@ static NSDictionary *jsawJsMethods;
   return [[JSWindowWrapper alloc] initWithAccessibilityWrapper:_aw screenWrapper:sw];
 }
 
-- (void)ewindow:(id)obj {
+- (void)ewindow:(JSValue *)obj {
   [self eachWindow:obj];
 }
 
-- (void)eachWindow:(id)funcOrOp {
-  NSString *type = [[JSController getInstance] jsTypeof:funcOrOp];
+- (void)eachWindow:(JSValue *)funcOrOp {
+  // Extract native ObjC object if the JSValue wraps one
+  id nativeObj = [funcOrOp toObject];
   CFArrayRef windowsArrRef = [AccessibilityWrapper windowsInRunningApp:app];
-  if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) return;
+  if (!windowsArrRef || CFArrayGetCount(windowsArrRef) == 0) {
+    if (windowsArrRef) CFRelease(windowsArrRef);
+    return;
+  }
   CFMutableArrayRef windowsArr = CFArrayCreateMutableCopy(kCFAllocatorDefault, 0, windowsArrRef);
-  if ([funcOrOp isKindOfClass:[Operation class]] || [funcOrOp isKindOfClass:[JSOperationWrapper class]]) {
+  CFRelease(windowsArrRef);
+  AXUIElementRef appRef = AXUIElementCreateApplication([app processIdentifier]);
+  if ([nativeObj isKindOfClass:[Operation class]] || [nativeObj isKindOfClass:[JSOperationWrapper class]]) {
     for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
-      AccessibilityWrapper *_aw = [[AccessibilityWrapper alloc] initWithApp:AXUIElementCreateApplication([app processIdentifier])
+      AccessibilityWrapper *_aw = [[AccessibilityWrapper alloc] initWithApp:appRef
                                                                      window:CFArrayGetValueAtIndex(windowsArr, i)];
-      [funcOrOp doOperationWithAccessibilityWrapper:_aw screenWrapper:sw];
+      [nativeObj doOperationWithAccessibilityWrapper:_aw screenWrapper:sw];
     }
-  } else if ([@"function" isEqualToString:type]) {
+  } else {
+    // Treat as JS function
     for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
-      AccessibilityWrapper *_aw = [[AccessibilityWrapper alloc] initWithApp:AXUIElementCreateApplication([app processIdentifier])
+      AccessibilityWrapper *_aw = [[AccessibilityWrapper alloc] initWithApp:appRef
                                                                      window:CFArrayGetValueAtIndex(windowsArr, i)];
-      [[JSController getInstance] runFunction:funcOrOp withArg:[[JSWindowWrapper alloc] initWithAccessibilityWrapper:_aw screenWrapper:sw]];
+      [funcOrOp callWithArguments:@[[[JSWindowWrapper alloc] initWithAccessibilityWrapper:_aw screenWrapper:sw]]];
     }
   }
+  CFRelease(appRef);
+  CFRelease(windowsArr);
 }
 
 - (NSString *)toString {
   return [self name];
-}
-
-+ (void)setJsMethods {
-  if (jsawJsMethods == nil) {
-    jsawJsMethods = @{
-      NSStringFromSelector(@selector(pid)): @"pid",
-      NSStringFromSelector(@selector(bundleIdentifier)): @"bundleIdentifier",
-      NSStringFromSelector(@selector(name)): @"name",
-      NSStringFromSelector(@selector(eachWindow:)): @"eachWindow",
-      NSStringFromSelector(@selector(ewindow:)): @"ewindow",
-      NSStringFromSelector(@selector(mainWindow)): @"mainWindow",
-      NSStringFromSelector(@selector(mwindow)): @"mwindow",
-    };
-  }
-}
-
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
-  return [jsawJsMethods objectForKey:NSStringFromSelector(sel)] == NULL;
-}
-
-+ (NSString *)webScriptNameForSelector:(SEL)sel {
-  return [jsawJsMethods objectForKey:NSStringFromSelector(sel)];
 }
 
 @end

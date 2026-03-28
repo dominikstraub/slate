@@ -65,8 +65,6 @@
   [task setStandardError:pipe];
   [task setStandardInput:[NSPipe pipe]];
 
-  NSFileHandle *file = [pipe fileHandleForReading];
-
   [task launch];
   if (wait){
     [task waitUntilExit];

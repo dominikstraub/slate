@@ -30,8 +30,6 @@
 
 @implementation JSWindowWrapper
 
-static NSDictionary *jswwJsMethods;
-
 @synthesize aw;
 @synthesize sw;
 
@@ -40,7 +38,6 @@ static NSDictionary *jswwJsMethods;
   if (self) {
     [self setAw:[[AccessibilityWrapper alloc] init]];
     [self setSw:[[ScreenWrapper alloc] init]];
-    [JSWindowWrapper setJsMethods];
   }
   return self;
 }
@@ -50,7 +47,6 @@ static NSDictionary *jswwJsMethods;
   if (self) {
     [self setAw:_aw];
     [self setSw:_sw];
-    [JSWindowWrapper setJsMethods];
   }
   return self;
 }
@@ -159,42 +155,6 @@ static NSDictionary *jswwJsMethods;
     }
   }
   return NO;
-}
-
-+ (void)setJsMethods {
-  if (jswwJsMethods == nil) {
-    jswwJsMethods = @{
-      NSStringFromSelector(@selector(title)): @"title",
-      NSStringFromSelector(@selector(topLeft)): @"topLeft",
-      NSStringFromSelector(@selector(tl)): @"tl",
-      NSStringFromSelector(@selector(size)): @"size",
-      NSStringFromSelector(@selector(rect)): @"rect",
-      NSStringFromSelector(@selector(pid)): @"pid",
-      NSStringFromSelector(@selector(focus)): @"focus",
-      NSStringFromSelector(@selector(isMinimizedOrHidden)): @"isMinimizedOrHidden",
-      NSStringFromSelector(@selector(hidden)): @"hidden",
-      NSStringFromSelector(@selector(isMovable)): @"isMovable",
-      NSStringFromSelector(@selector(movable)): @"movable",
-      NSStringFromSelector(@selector(isResizable)): @"isResizable",
-      NSStringFromSelector(@selector(resizable)): @"resizable",
-      NSStringFromSelector(@selector(isMain)): @"isMain",
-      NSStringFromSelector(@selector(main)): @"main",
-      NSStringFromSelector(@selector(move:)): @"move",
-      NSStringFromSelector(@selector(resize:)): @"resize",
-      NSStringFromSelector(@selector(screen)): @"screen",
-      NSStringFromSelector(@selector(doOperation:options:)): @"doOperation",
-      NSStringFromSelector(@selector(doop:options:)): @"doop",
-      NSStringFromSelector(@selector(app)): @"app",
-    };
-  }
-}
-
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)sel {
-  return [jswwJsMethods objectForKey:NSStringFromSelector(sel)] == NULL;
-}
-
-+ (NSString *)webScriptNameForSelector:(SEL)sel {
-  return [jswwJsMethods objectForKey:NSStringFromSelector(sel)];
 }
 
 @end
