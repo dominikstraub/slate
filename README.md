@@ -30,7 +30,7 @@ On first launch, Slate will ask for Accessibility permissions in System Settings
 
 ## Changes from Original
 
-* **Builds on modern Xcode** (26.3+) with zero errors and zero warnings
+* **Builds on modern Xcode** (26.4+) with zero errors and zero warnings
 * **Runs natively on Apple Silicon** (arm64)
 * **Removed Sparkle** auto-update framework and legacy build scripts
 * **Replaced WebView with JavaScriptCore** — the JS engine (`~/.slate.js`) now uses `JSContext`/`JSValue` instead of the removed WebKit 1 `WebView` class
