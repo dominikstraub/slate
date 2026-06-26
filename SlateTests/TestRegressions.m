@@ -27,6 +27,8 @@
 #import "Operation.h"
 #import "MoveOperation.h"
 #import "ExpressionPoint.h"
+#import "SnapshotList.h"
+#import "Constants.h"
 
 @interface TestRegressions : XCTestCase
 @end
@@ -76,6 +78,16 @@
 - (void)testExpressionPoint {
   XCTAssertEqual([ExpressionPoint expToFloat:@"2+3" withDict:@{}], (float)5.0, @"arithmetic evaluates");
   XCTAssertThrows([ExpressionPoint expToFloat:nil withDict:@{}], @"nil expression throws");
+}
+
+// Issue 1: a SnapshotList's stackSize must survive serialization; legacy dicts (no key) fall back to the config default.
+- (void)testSnapshotListStackSizeRoundTrip {
+  SnapshotList *sl = [[SnapshotList alloc] initWithName:@"t" saveToDisk:YES isStack:YES stackSize:5];
+  SnapshotList *loaded = [SnapshotList snapshotListFromDictionary:[sl toDictionary]];
+  XCTAssertEqual([loaded stackSize], (NSInteger)5, @"stackSize should survive a serialize/deserialize round trip");
+  // legacy dict (no stack-size key) loads via the config default without throwing
+  NSDictionary *legacy = @{NAME: @"t", SAVE_TO_DISK: @YES, STACK: @YES, SNAPSHOTS: @[]};
+  XCTAssertNoThrow([SnapshotList snapshotListFromDictionary:legacy], @"legacy dict (no stack-size key) loads via config default");
 }
 
 @end

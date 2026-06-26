@@ -502,11 +502,12 @@ static SlateConfig *_instance = nil;
 - (void)addSnapshot:(Snapshot *)snapshot name:(NSString *)name saveToDisk:(BOOL)saveToDisk isStack:(BOOL)isStack stackSize:(NSUInteger)stackSize {
   SnapshotList *list = [snapshots objectForKey:name];
   if (list == nil) {
-    list = [[SnapshotList alloc] initWithName:name saveToDisk:saveToDisk isStack:isStack];
+    list = [[SnapshotList alloc] initWithName:name saveToDisk:saveToDisk isStack:isStack stackSize:stackSize];
   } else {
     [list setName:name];
     [list setSaveToDisk:saveToDisk];
     [list setIsStack:isStack];
+    [list setStackSize:stackSize];
   }
   [list addSnapshot:snapshot];
   [snapshots setObject:list forKey:name];

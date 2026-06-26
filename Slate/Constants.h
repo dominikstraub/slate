@@ -229,6 +229,7 @@ extern NSString *const SAVE_TO_DISK;
 extern NSString *const STACK;
 extern NSString *const NAME;
 extern NSString *const SNAPSHOTS;
+extern NSString *const STACK_SIZE;
 extern NSString *const APPS;
 extern NSString *const APP_NAME;
 extern NSString *const TITLE;

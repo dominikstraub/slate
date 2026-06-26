@@ -38,6 +38,7 @@
 @property (assign) NSInteger stackSize;
 
 - (id)initWithName:(NSString *)theName saveToDisk:(BOOL)theSaveToDisk isStack:(BOOL)theIsStack;
+- (id)initWithName:(NSString *)theName saveToDisk:(BOOL)theSaveToDisk isStack:(BOOL)theIsStack stackSize:(NSUInteger)theStackSize;
 - (void)addSnapshot:(Snapshot *)snapshot;
 - (Snapshot *)popSnapshot:(BOOL)remove;
 - (NSDictionary *)toDictionary;

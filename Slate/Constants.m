@@ -229,6 +229,7 @@ NSString *const SAVE_TO_DISK = @"save-to-disk";
 NSString *const STACK = @"stack";
 NSString *const NAME = @"name";
 NSString *const SNAPSHOTS = @"snapshots";
+NSString *const STACK_SIZE = @"stack-size";
 NSString *const APPS = @"apps";
 NSString *const APP_NAME = @"app-name";
 NSString *const TITLE = @"title";
