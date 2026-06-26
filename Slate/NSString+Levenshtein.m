@@ -25,8 +25,8 @@
 - (float) levenshteinDistance:(NSString *)stringB {
   // normalize strings
   NSString * stringA = [NSString stringWithString: self];
-  [stringA stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-  [stringB stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+  stringA = [stringA stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+  stringB = [stringB stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
   stringA = [stringA lowercaseString];
   stringB = [stringB lowercaseString];
 
@@ -34,8 +34,11 @@
   int k, i, j, cost, * d, distance;
   NSUInteger n = [stringA length];
   NSUInteger m = [stringB length];
+  if (n == 0) return (float)m; // Levenshtein distance from an empty string is the other's length
+  if (m == 0) return (float)n;
   if( n++ != 0 && m++ != 0 ) {
     d = malloc( sizeof(int) * m * n );
+    if (d == NULL) return 0.0;
     // Step 2
     for( k = 0; k < n; k++)
       d[k] = k;
@@ -64,8 +67,8 @@
 
 - (float) sequentialDistance:(NSString *)stringB {
   NSString * stringA = [NSString stringWithString: self];
-  [stringA stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-  [stringB stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+  stringA = [stringA stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+  stringB = [stringB stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
   stringA = [stringA lowercaseString];
   stringB = [stringB lowercaseString];
   float distance = 0.0;

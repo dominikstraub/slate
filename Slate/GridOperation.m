@@ -138,7 +138,7 @@ static const UInt32 ESC_GRID_ID = 10002;
     screenId++;
   }
   if (toFocus != nil) {
-    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+    [[NSApplication sharedApplication] activate]; // modern replacement for activateIgnoringOtherApps:
     [toFocus makeKeyAndOrderFront:self];
   }
 

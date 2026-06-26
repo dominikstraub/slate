@@ -195,23 +195,6 @@ static float switchFontHeight = -1;
     NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:cornerSize yRadius:cornerSize];
     [path fill];
   }
-  /*if (borderSize > 0 && selected) {
-    [borderColor set];
-    NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:cornerSize yRadius:cornerSize];
-    [path fill];
-    [backgroundColor set];
-    path = [NSBezierPath bezierPathWithRoundedRect:NSMakeRect([self bounds].origin.x+borderSize,
-                                                                            [self bounds].origin.y+borderSize,
-                                                                            [self bounds].size.width-borderSize*2,
-                                                                            [self bounds].size.height-borderSize*2)
-                                           xRadius:cornerSize
-                                           yRadius:cornerSize];
-    [path fill];
-  } else {
-    [backgroundColor set];
-    NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:[self bounds] xRadius:cornerSize yRadius:cornerSize];
-    [path fill];
-  }*/
   [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
 

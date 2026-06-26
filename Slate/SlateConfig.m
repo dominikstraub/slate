@@ -72,10 +72,7 @@ static SlateConfig *_instance = nil;
     [self setSnapshots:[NSMutableDictionary dictionary]];
     
     // Listen for screen change notifications with Quartz
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGDisplayRegisterReconfigurationCallback(onDisplayReconfiguration, (__bridge void *)(self));
-#pragma clang diagnostic pop
     //[nc addObserver:self selector:@selector(processNotification:) name:nil object:nil];
   }
   return self;

@@ -43,9 +43,8 @@
 }
 
 - (id)initWithArray:(NSArray *)opArray {
-  self = [self init];
+  self = [self init]; // -init already allocates currentOp
   if (self) {
-    [self setCurrentOp:[[NSMutableDictionary alloc] initWithCapacity:10]];
     [self setOperations:opArray];
   }
   return self;

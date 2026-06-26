@@ -33,6 +33,10 @@
   XCTAssertEqual([a levenshteinDistance:c], (float)1, @"Levenshtein Distance between hello and hallo should be 1");
   XCTAssertEqual([a levenshteinDistance:d], (float)1, @"Levenshtein Distance between hello and helllo should be 1");
   XCTAssertEqual([a levenshteinDistance:e], (float)3, @"Levenshtein Distance between hello and hldla should be 3");
+  // empty-string distances (previously returned 0 instead of the other's length)
+  XCTAssertEqual([a levenshteinDistance:@""], (float)5, @"Levenshtein Distance between hello and empty should be 5");
+  XCTAssertEqual([@"" levenshteinDistance:a], (float)5, @"Levenshtein Distance between empty and hello should be 5");
+  XCTAssertEqual([@"" levenshteinDistance:@""], (float)0, @"Levenshtein Distance between empty and empty should be 0");
 }
 
 - (void)testSequentialDistance {

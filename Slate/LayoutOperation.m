@@ -193,7 +193,7 @@
           SlateLogger(@" Checking Title: %@", [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)]);
           NSError *error = nil;
           NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[titleOrder objectAtIndex:j] options:0 error:&error];
-          if (error != NULL && error != nil) {
+          if (error != nil) {
             continue;
           }
           NSString *currWinTitle = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];

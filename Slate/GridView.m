@@ -121,8 +121,7 @@
 
 - (void)activateCellsInRect:(NSRect)rect {
   if (NSEqualRects(rect, [self previousActiveRect])) {
-    [self setPreviousActiveRect:rect];
-    return;
+    return; // unchanged rect: nothing to do (the redundant re-set was a no-op)
   }
   [self setPreviousActiveRect:rect];
   SlateLogger(@"activate cells in: %f,%f,%f,%f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);

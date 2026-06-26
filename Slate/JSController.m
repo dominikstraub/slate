@@ -103,7 +103,7 @@ static JSController *_instance = nil;
 - (BOOL)runFile:(NSString*)path {
   NSError *err;
   NSString *fileString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&err];
-  if(err == nil && fileString != nil && fileString != NULL) {
+  if (err == nil && fileString != nil) {
     [self run:fileString];
     return YES;
   }

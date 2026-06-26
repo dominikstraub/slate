@@ -157,7 +157,6 @@
     value = [val stringValue];
   } else {
     @throw([NSException exceptionWithName:[NSString stringWithFormat:@"Invalid %@", name] reason:[NSString stringWithFormat:@"Invalid %@ '%@'", name, val] userInfo:nil]);
-    return;
   }
   [[self options] setValue:value forKey:name];
   if ([name isEqualToString:OPT_X]) {

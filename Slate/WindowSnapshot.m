@@ -43,8 +43,8 @@
 
 - (NSDictionary *)toDictionary {
   return [NSDictionary dictionaryWithObjectsAndKeys:
-          appName, APP_NAME,
-          title, TITLE,
+          appName ? appName : @"", APP_NAME,  // nil would terminate the varargs list early and drop later keys
+          title ? title : @"", TITLE,
           [NSNumber numberWithFloat:topLeft.x], X,
           [NSNumber numberWithFloat:topLeft.y], Y,
           [NSNumber numberWithFloat:size.width], WIDTH,

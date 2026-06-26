@@ -433,7 +433,7 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
     if ([(SwitchOperation *)[currSwitch op] modifiersChanged:[currSwitch modifiers] new:modifiers]) {
       [(__bridge SlateAppDelegate *)userData setCurrentSwitchBinding:nil];
       RemoveEventHandler(modifiersEvent);
-      keyUpSeen = YES;
+      @synchronized(keyUpLock) { keyUpSeen = YES; } // keep keyUpSeen access under keyUpLock like the other sites
     }
   }
   return noErr;
@@ -549,7 +549,7 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
   if (menuItem == activateSnapshotItem) {
-    SnapshotList *menuSnapshots = [[[SlateConfig getInstance] snapshots] objectForKey:@"menuSnapshot"];
+    SnapshotList *menuSnapshots = [[[SlateConfig getInstance] snapshots] objectForKey:MENU_SNAPSHOT];
     if (menuSnapshots == nil || [[menuSnapshots snapshots] count] <= 0) {
       return NO;
     }

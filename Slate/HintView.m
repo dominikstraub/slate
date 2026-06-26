@@ -55,6 +55,7 @@ static float hintIconAlpha = -1.0;
     if (hintFont == nil) {
       hintFont = [NSFont fontWithName:[[SlateConfig getInstance] getConfig:WINDOW_HINTS_FONT_NAME]
                                  size:[[SlateConfig getInstance] getFloatConfig:WINDOW_HINTS_FONT_SIZE]];
+      if (hintFont == nil) hintFont = [NSFont systemFontOfSize:[[SlateConfig getInstance] getFloatConfig:WINDOW_HINTS_FONT_SIZE]]; // configured font name may be invalid
     }
     if (hintIconAlpha < 0.0) {
       hintIconAlpha = [[SlateConfig getInstance] getFloatConfig:WINDOW_HINTS_ICON_ALPHA];
@@ -65,8 +66,8 @@ static float hintIconAlpha = -1.0;
 
 - (void)setIconFromAppRef:(AXUIElementRef)appRef {
   if ([[SlateConfig getInstance] getBoolConfig:WINDOW_HINTS_SHOW_ICONS]) {
-    pid_t pid;
-    AXUIElementGetPid(appRef, &pid);
+    pid_t pid = 0;
+    if (AXUIElementGetPid(appRef, &pid) != kAXErrorSuccess) return;
     NSRunningApplication *app = [NSRunningApplication runningApplicationWithProcessIdentifier:pid];
     [self setIcon:[app icon]];
   }
