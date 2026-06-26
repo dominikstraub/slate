@@ -105,7 +105,8 @@ static void registerForWindowDeath(AXUIElementRef element, RunningApplications *
   // register for death event
   AXError err;
   AXObserverRef observer;
-  AXObserverCreate([AccessibilityWrapper processIdentifierOfUIElement:element], windowChanged, &observer);
+  err = AXObserverCreate([AccessibilityWrapper processIdentifierOfUIElement:element], windowChanged, &observer);
+  if (err != kAXErrorSuccess) return; // observer is uninitialized on failure; don't use it
   err = AXObserverAddNotification(observer, element, kAXUIElementDestroyedNotification, (__bridge void *)ref);
   if (err != kAXErrorSuccess) {
     AXObserverRemoveNotification(observer, element, kAXUIElementDestroyedNotification);
@@ -341,18 +342,20 @@ static void windowCallback(AXObserverRef observer, AXUIElementRef element, CFStr
         AXError err;
         AXUIElementRef sendingApp = AXUIElementCreateApplication([app processIdentifier]);
         AXObserverRef observer;
-        AXObserverCreate([app processIdentifier], windowCallback, &observer);
-        AXObserverAddNotification(observer, sendingApp, kAXWindowCreatedNotification, (__bridge void *)self);
-        AXObserverAddNotification(observer, sendingApp, kAXFocusedWindowChangedNotification, (__bridge void *)self);
-        err = AXObserverAddNotification(observer, sendingApp, kAXTitleChangedNotification, (__bridge void *)self);
-        if (err != kAXErrorSuccess) {
-          AXObserverRemoveNotification(observer, sendingApp, kAXWindowCreatedNotification);
-          AXObserverRemoveNotification(observer, sendingApp, kAXFocusedWindowChangedNotification);
-          AXObserverRemoveNotification(observer, sendingApp, kAXTitleChangedNotification);
-          CFRelease(observer);
-        } else {
-          CFRunLoopAddSource ([[NSRunLoop currentRunLoop] getCFRunLoop], AXObserverGetRunLoopSource(observer), kCFRunLoopDefaultMode);
-          [pidToObserver setObject:[NSValue valueWithPointer:observer] forKey:[NSNumber numberWithInteger:[app processIdentifier]]];
+        err = AXObserverCreate([app processIdentifier], windowCallback, &observer);
+        if (err == kAXErrorSuccess) { // observer is uninitialized on failure; don't use it
+          AXObserverAddNotification(observer, sendingApp, kAXWindowCreatedNotification, (__bridge void *)self);
+          AXObserverAddNotification(observer, sendingApp, kAXFocusedWindowChangedNotification, (__bridge void *)self);
+          err = AXObserverAddNotification(observer, sendingApp, kAXTitleChangedNotification, (__bridge void *)self);
+          if (err != kAXErrorSuccess) {
+            AXObserverRemoveNotification(observer, sendingApp, kAXWindowCreatedNotification);
+            AXObserverRemoveNotification(observer, sendingApp, kAXFocusedWindowChangedNotification);
+            AXObserverRemoveNotification(observer, sendingApp, kAXTitleChangedNotification);
+            CFRelease(observer);
+          } else {
+            CFRunLoopAddSource ([[NSRunLoop currentRunLoop] getCFRunLoop], AXObserverGetRunLoopSource(observer), kCFRunLoopDefaultMode);
+            [pidToObserver setObject:[NSValue valueWithPointer:observer] forKey:[NSNumber numberWithInteger:[app processIdentifier]]];
+          }
         }
         CFRelease(sendingApp);
       }

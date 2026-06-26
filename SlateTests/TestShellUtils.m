@@ -53,4 +53,21 @@
   XCTAssertEqual(found, 1, @"Result should include all strings");
 }
 
+// run:args:wait:path: drains its (undrained) stdout/stderr pipe before waitUntilExit, so a wait:YES
+// command emitting more than the ~64KB pipe buffer must NOT deadlock. Run on a background queue
+// behind an expectation so a regression fails fast (timeout) instead of wedging the whole suite.
+- (void)testRunWaitDoesNotDeadlockOnLargeOutput {
+  XCTestExpectation *done = [self expectationWithDescription:@"shell command returns"];
+  __block NSTask *task = nil;
+  dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+    task = [ShellUtils run:@"/bin/sh"
+                      args:[NSArray arrayWithObjects:@"-c", @"yes aaaaaaaaaa | head -n 20000", nil] // ~220KB > 64KB pipe buffer
+                      wait:YES path:nil];
+    [done fulfill];
+  });
+  [self waitForExpectationsWithTimeout:10 handler:nil]; // a deadlock regression fails here, fast
+  XCTAssertNotNil(task, @"task should be returned, not deadlocked");
+  XCTAssertFalse([task isRunning], @"wait:YES with large output must drain and return, not deadlock");
+}
+
 @end

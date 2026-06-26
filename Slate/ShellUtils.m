@@ -66,17 +66,20 @@
   [task setStandardError:pipe];
   [task setStandardInput:[NSPipe pipe]];
 
-  // NOTE: stdout/stderr are wired to `pipe` but never drained here (this method
-  // returns the NSTask without reading). If a future caller passes wait=YES for a
-  // command that emits more than the pipe buffer (~64KB), the child blocks on
-  // write() while the caller blocks in waitUntilExit -> deadlock. No current
-  // caller does this; drain concurrently (readabilityHandler) before adding one.
+  // NOTE: stdout/stderr share `pipe`. In the wait branch we drain it before
+  // waitUntilExit, else a command emitting more than the pipe buffer (~64KB)
+  // would block on write() while we block in waitUntilExit -> deadlock (a user
+  // `shell '...' wait:true` can hit this via ShellOperation). The non-wait branch
+  // returns the task with an undrained pipe the caller owns and does not read, so
+  // a wait:false command emitting >64KB could stall in the background but cannot
+  // block our main thread; add a readabilityHandler drain if a caller ever needs it.
   NSError *err = nil;
   if (![task launchAndReturnError:&err]) {
     SlateLogger(@"ERROR: could not launch '%@': %@", command, err);
     return task;
   }
   if (wait){
+    [[pipe fileHandleForReading] readDataToEndOfFile]; // drain BEFORE waiting to avoid a full-pipe deadlock
     [task waitUntilExit];
   }
   return task;
