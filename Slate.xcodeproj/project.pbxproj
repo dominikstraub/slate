@@ -51,6 +51,7 @@
 		3BA1BA68162F3E530026774E /* ShellOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA1BA67162F3E530026774E /* ShellOperation.m */; };
 		3BA1BA6B162F4CFF0026774E /* ShellUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA1BA6A162F4CFF0026774E /* ShellUtils.m */; };
 		3BA1BA6E162F51760026774E /* TestShellUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA1BA6D162F51760026774E /* TestShellUtils.m */; };
+		60A3398BCDEA27C9A1FE2DC8 /* TestRegressions.m in Sources */ = {isa = PBXBuildFile; fileRef = C2FB3207A81011DC6289EA35 /* TestRegressions.m */; };
 		3BA7485913B1D0F500CFA792 /* MathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA7485813B1D0F500CFA792 /* MathUtils.m */; };
 		3BADA37213A2C1ED009E21D8 /* AccessibilityWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BADA37113A2C1ED009E21D8 /* AccessibilityWrapper.m */; };
 		3BB5380413AEDA1B0005CFFC /* ScreenState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BB5380313AEDA190005CFFC /* ScreenState.m */; };
@@ -182,6 +183,7 @@
 		3BA1BA5B162DD7190026774E /* TestMathUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMathUtils.m; sourceTree = "<group>"; };
 		3BA1BA60162DDFEF0026774E /* TestExpressionPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestExpressionPoint.h; sourceTree = "<group>"; };
 		3BA1BA61162DDFEF0026774E /* TestExpressionPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestExpressionPoint.m; sourceTree = "<group>"; };
+		C2FB3207A81011DC6289EA35 /* TestRegressions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestRegressions.m; sourceTree = "<group>"; };
 		3BA1BA63162E01A20026774E /* TestStringTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestStringTokenizer.h; sourceTree = "<group>"; };
 		3BA1BA64162E01A20026774E /* TestStringTokenizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestStringTokenizer.m; sourceTree = "<group>"; };
 		3BA1BA66162F3E530026774E /* ShellOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShellOperation.h; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 				3BA1BA6D162F51760026774E /* TestShellUtils.m */,
 				3BA1BA63162E01A20026774E /* TestStringTokenizer.h */,
 				3BA1BA64162E01A20026774E /* TestStringTokenizer.m */,
+				C2FB3207A81011DC6289EA35 /* TestRegressions.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -750,6 +753,7 @@
 				3BA1BA62162DDFEF0026774E /* TestExpressionPoint.m in Sources */,
 				3BA1BA65162E01A30026774E /* TestStringTokenizer.m in Sources */,
 				3BA1BA6E162F51760026774E /* TestShellUtils.m in Sources */,
+				60A3398BCDEA27C9A1FE2DC8 /* TestRegressions.m in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
