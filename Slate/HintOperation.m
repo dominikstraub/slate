@@ -144,12 +144,12 @@ static const UInt32 ESC_HINT_ID = 10001;
       whTLX = tl.x + whTLXRel;
       whTLY = tl.y - whTLYRel;
       frame = NSMakeRect(whTLX, whTLY - whHeight, whWidth, whHeight);
-      if ([[AccessibilityWrapper getTitle:[AccessibilityWrapper
-                                           windowUnderPoint:NSMakePoint(wTL.x + whTLXRel + whWidth/2,
-                                                                        wTL.y + whTLYRel + whHeight/2)]]
-           isEqualToString:[AccessibilityWrapper getTitle:windowRef]]) {
+      AXUIElementRef _wup = [AccessibilityWrapper windowUnderPoint:NSMakePoint(wTL.x + whTLXRel + whWidth/2,
+                                                                               wTL.y + whTLYRel + whHeight/2)];
+      if ([[AccessibilityWrapper getTitle:_wup] isEqualToString:[AccessibilityWrapper getTitle:windowRef]]) {
         foundValidLocation = YES;
       }
+      if (_wup != NULL) CFRelease(_wup); // windowUnderPoint: returns a +1 ref; release it (was leaked each loop iteration)
       i++;
     } while (!foundValidLocation && i < [whTLXArr count]);
     if (!foundValidLocation) {

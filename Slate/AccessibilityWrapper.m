@@ -70,7 +70,7 @@ static NSDictionary *unselectableApps = nil;
 }
 
 + (NSPoint)getTopLeftForWindow:(AXUIElementRef)window {
-  CFTypeRef _cPosition;
+  CFTypeRef _cPosition = NULL;
   NSPoint cTopLeft;
 
   if (AXUIElementCopyAttributeValue(window, (CFStringRef)NSAccessibilityPositionAttribute, (CFTypeRef *)&_cPosition) == kAXErrorSuccess) {
@@ -92,7 +92,7 @@ static NSDictionary *unselectableApps = nil;
 }
 
 + (NSSize)getSizeForWindow:(AXUIElementRef)window {
-  CFTypeRef _cSize;
+  CFTypeRef _cSize = NULL;
   NSSize cSize;
 
   if (AXUIElementCopyAttributeValue(window, (CFStringRef)NSAccessibilitySizeAttribute, (CFTypeRef *)&_cSize) == kAXErrorSuccess) {
@@ -247,12 +247,13 @@ static NSDictionary *unselectableApps = nil;
 
 + (BOOL)isMainWindow:(AXUIElementRef)window {
   [AccessibilityWrapper createSystemWideElement];
-  CFTypeRef _isMain;
+  CFTypeRef _isMain = NULL;
+  BOOL isMain = NO;
   if (AXUIElementCopyAttributeValue(window, (CFStringRef)NSAccessibilityMainAttribute, (CFTypeRef *)&_isMain) == kAXErrorSuccess) {
-    NSNumber *isMain = (__bridge NSNumber *) _isMain;
-    return [isMain boolValue];
+    isMain = [(__bridge NSNumber *) _isMain boolValue];
   }
-  return NO;
+  if (_isMain != NULL) CFRelease(_isMain); // balance the Copy +1 (was leaked on the success path)
+  return isMain;
 }
 
 + (NSString *)getTitle:(AXUIElementRef)window {
@@ -269,8 +270,8 @@ static NSDictionary *unselectableApps = nil;
 
 + (BOOL)isWindowMinimizedOrHidden:(AXUIElementRef)window inApp:(AXUIElementRef)app {
   [AccessibilityWrapper createSystemWideElement];
-  CFTypeRef _isMinimized;
-  CFTypeRef _isHidden;
+  CFTypeRef _isMinimized = NULL;
+  CFTypeRef _isHidden = NULL;
   BOOL isMinimized = NO;
   BOOL isHidden = NO;
   if (AXUIElementCopyAttributeValue(app, (CFStringRef)NSAccessibilityHiddenAttribute, (CFTypeRef *)&_isHidden) == kAXErrorSuccess) {
@@ -281,6 +282,8 @@ static NSDictionary *unselectableApps = nil;
     NSNumber *isMinimizedNum = (__bridge NSNumber *) _isMinimized;
     isMinimized = [isMinimizedNum boolValue];
   }
+  if (_isHidden != NULL) CFRelease(_isHidden);       // balance the Copy +1 (was leaked)
+  if (_isMinimized != NULL) CFRelease(_isMinimized);
   return isMinimized || isHidden;
 }
 
@@ -323,9 +326,11 @@ static NSDictionary *unselectableApps = nil;
 }
 
 + (BOOL)isWindow:(AXUIElementRef)element {
-  CFTypeRef _role;
-  AXUIElementCopyAttributeValue(element, (CFStringRef)NSAccessibilityRoleAttribute, &_role);
-  BOOL isWindow = [NSAccessibilityWindowRole isEqualToString:(__bridge NSString *)_role];
+  CFTypeRef _role = NULL;
+  BOOL isWindow = NO;
+  if (AXUIElementCopyAttributeValue(element, (CFStringRef)NSAccessibilityRoleAttribute, &_role) == kAXErrorSuccess) {
+    isWindow = [NSAccessibilityWindowRole isEqualToString:(__bridge NSString *)_role];
+  }
   if (_role != NULL) CFRelease(_role);
   return isWindow;
 }

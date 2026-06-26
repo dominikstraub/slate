@@ -40,7 +40,8 @@
 
     NSFileHandle *file = [pipe fileHandleForReading];
 
-    [task launch];
+    NSError *err = nil;
+    if (![task launchAndReturnError:&err]) return NO;
 
     NSData *data = [file readDataToEndOfFile];
 
@@ -65,7 +66,16 @@
   [task setStandardError:pipe];
   [task setStandardInput:[NSPipe pipe]];
 
-  [task launch];
+  // NOTE: stdout/stderr are wired to `pipe` but never drained here (this method
+  // returns the NSTask without reading). If a future caller passes wait=YES for a
+  // command that emits more than the pipe buffer (~64KB), the child blocks on
+  // write() while the caller blocks in waitUntilExit -> deadlock. No current
+  // caller does this; drain concurrently (readabilityHandler) before adding one.
+  NSError *err = nil;
+  if (![task launchAndReturnError:&err]) {
+    SlateLogger(@"ERROR: could not launch '%@': %@", command, err);
+    return task;
+  }
   if (wait){
     [task waitUntilExit];
   }
@@ -99,10 +109,14 @@
   NSFileHandle *file;
   file = [pipe fileHandleForReading];
 
-  [task launch];
+  NSError *err = nil;
+  if (![task launchAndReturnError:&err]) {
+    SlateLogger(@"ERROR: could not launch '%@': %@", command, err);
+    return nil;
+  }
   if (!wait) return nil;
+  NSData *data = [file readDataToEndOfFile]; // drain BEFORE waiting to avoid a full-pipe deadlock
   [task waitUntilExit];
-  NSData *data = [file readDataToEndOfFile];
   NSString *res = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
   return res;
 }

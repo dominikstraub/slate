@@ -109,8 +109,8 @@
       return NO;
     }
     NSRect biggestIntersection = NSZeroRect;
-    AXUIElementRef windowToFocus;
-    AXUIElementRef appToFocus;
+    AXUIElementRef windowToFocus = NULL;
+    AXUIElementRef appToFocus = NULL;
     BOOL foundFocus = NO;
     BOOL foundFocusInSameApp = NO;
     NSMutableArray *allocatedAppRefs = [NSMutableArray array];
@@ -156,20 +156,24 @@
               && (!foundFocusInSameApp || [MathUtils isRect:intersection biggerThan:biggestIntersection])) {
             SlateLogger(@"   Preferring same app.");
             appToFocus = appRef;
-            windowToFocus = CFArrayGetValueAtIndex(windows, i);
+            // retain the chosen window so it outlives CFRelease(windows) below; release the previous pick
+            if (windowToFocus) CFRelease(windowToFocus);
+            windowToFocus = (AXUIElementRef)CFRetain(CFArrayGetValueAtIndex(windows, i));
             biggestIntersection = intersection;
             foundFocus = YES;
             foundFocusInSameApp = YES;
           } else if ([MathUtils isRect:intersection biggerThan:biggestIntersection]) {
             appToFocus = appRef;
-            windowToFocus = CFArrayGetValueAtIndex(windows, i);
+            if (windowToFocus) CFRelease(windowToFocus);
+            windowToFocus = (AXUIElementRef)CFRetain(CFArrayGetValueAtIndex(windows, i));
             biggestIntersection = intersection;
             foundFocus = YES;
           }
         } else if ([MathUtils isRect:intersection biggerThan:biggestIntersection]) {
           SlateLogger(@"  Found window in %@ in direction %i (intersection: %f,%f %f,%f)",[runningApp localizedName],(int)direction,intersection.origin.x,intersection.origin.y,intersection.size.width,intersection.size.height);
           appToFocus = appRef;
-          windowToFocus = CFArrayGetValueAtIndex(windows, i);
+          if (windowToFocus) CFRelease(windowToFocus);
+          windowToFocus = (AXUIElementRef)CFRetain(CFArrayGetValueAtIndex(windows, i));
           biggestIntersection = intersection;
           foundFocus = YES;
         }
@@ -179,6 +183,7 @@
       if(foundFocusInSameApp && [AccessibilityWrapper processIdentifierOfUIElement:[caAW app]] == appPID && [[SlateConfig getInstance] getBoolConfig:FOCUS_PREFER_SAME_APP]) {
         AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appToFocus window:windowToFocus];
         [aw focus];
+        if (windowToFocus) CFRelease(windowToFocus);
         for (NSValue *v in allocatedAppRefs) CFRelease([v pointerValue]);
         return YES;
       }
@@ -186,9 +191,11 @@
     if (foundFocus) {
       AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appToFocus window:windowToFocus];
       [aw focus];
+      if (windowToFocus) CFRelease(windowToFocus);
       for (NSValue *v in allocatedAppRefs) CFRelease([v pointerValue]);
       return YES;
     }
+    if (windowToFocus) CFRelease(windowToFocus);
     for (NSValue *v in allocatedAppRefs) CFRelease([v pointerValue]);
     focusCheckWidth += [[SlateConfig getInstance] getIntegerConfig:FOCUS_CHECK_WIDTH];
   }
