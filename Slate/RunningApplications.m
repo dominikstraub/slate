@@ -67,7 +67,9 @@ static NSString *prettyifyEventName(NSString *event) {
 
 static void runWindowJSCallbacks(AXUIElementRef element, CFStringRef notification) {
   // Run any js callbacks
-  AccessibilityWrapper *openedWindow = [[AccessibilityWrapper alloc] initWithApp:[AccessibilityWrapper applicationForElement:element] window:element];
+  AXUIElementRef appRef = [AccessibilityWrapper applicationForElement:element]; // +1 owned
+  AccessibilityWrapper *openedWindow = [[AccessibilityWrapper alloc] initWithApp:appRef window:element];
+  if (appRef != NULL) CFRelease(appRef); // wrapper holds its own copy; `element` is borrowed (do NOT release)
   NSString *eventName = prettyifyEventName([NSString stringWithFormat:@"%@", notification]);
   [[JSController getInstance] runCallbacks:eventName
                                    payload:[[JSWindowWrapper alloc] initWithAccessibilityWrapper:openedWindow screenWrapper:[[ScreenWrapper alloc] init]]];

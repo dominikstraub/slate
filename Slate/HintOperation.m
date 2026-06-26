@@ -195,6 +195,15 @@ static const UInt32 ESC_HINT_ID = 10001;
     [[wc window] setContentView:label];
     [wc showWindow:[wc window]];
   }
+  // Stash the refs as raw pointers for activateHintKey:. Their owning arrays/appRefs are
+  // CFReleased by the hint-creation loops right after this returns, so retain our own +1
+  // here (released in killHints). Release any pointer we are about to overwrite first.
+  NSValue *prevWin = [windows objectForKey:currentHintNumber];
+  if (prevWin != nil && [prevWin pointerValue] != NULL) CFRelease([prevWin pointerValue]);
+  NSValue *prevApp = [apps objectForKey:currentHintNumber];
+  if (prevApp != nil && [prevApp pointerValue] != NULL) CFRelease([prevApp pointerValue]);
+  if (windowRef != NULL) CFRetain(windowRef);
+  if (appRef != NULL) CFRetain(appRef);
   [windows setObject:[NSValue valueWithPointer:windowRef] forKey:currentHintNumber];
   [apps setObject:[NSValue valueWithPointer:appRef] forKey:currentHintNumber];
 
@@ -320,7 +329,10 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
     }
   } else {
     // custom sort order
-    CFMutableArrayRef allWindows = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
+    // Use CF type callbacks so appended window elements are retained: the per-app source
+    // arrays are CFReleased below before these elements are used, so NULL callbacks would
+    // leave dangling pointers (use-after-free).
+    CFMutableArrayRef allWindows = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
     for (NSRunningApplication *app in [RunningApplications getInstance]) {
       pid_t appPID = [app processIdentifier];
       SlateLogger(@"I see application '%@' with pid '%d'", [app localizedName], appPID);
@@ -392,6 +404,9 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
   for (NSWindowController *hint in [hints allValues]) {
     [hint close];
   }
+  // Balance the CFRetains from createHintWindowFor:'s stash.
+  for (NSValue *v in [windows allValues]) { if ([v pointerValue] != NULL) CFRelease([v pointerValue]); }
+  for (NSValue *v in [apps allValues]) { if ([v pointerValue] != NULL) CFRelease([v pointerValue]); }
   [windows removeAllObjects];
   [apps removeAllObjects];
   if (refocus && currentWindow) [currentWindow focus];

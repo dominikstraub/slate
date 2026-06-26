@@ -33,24 +33,33 @@ static NSDictionary *unselectableApps = nil;
 @synthesize window;
 @synthesize inited;
 
+// This wrapper OWNS its app/window AXUIElementRefs. -init keeps the +1 from the
+// Copy/Create calls below; -initWithApp:window: CFRetains the (usually borrowed)
+// refs it is handed; -dealloc CFReleases both. A caller that passes an already
+// owned (+1) ref into -initWithApp:window: must release its own reference after
+// constructing the wrapper (the wrapper holds an independent retained copy).
 - (id)init {
   self = [super init];
   if (self) {
     [AccessibilityWrapper createSystemWideElement];
 
     // Get App that has focus
-    CFTypeRef _app;
-    AXUIElementCopyAttributeValue(systemWideElement, (CFStringRef)kAXFocusedApplicationAttribute, (CFTypeRef *)&_app);
-    [self setApp:(AXUIElementRef)_app];
+    CFTypeRef _app = NULL;
+    if (AXUIElementCopyAttributeValue(systemWideElement, (CFStringRef)kAXFocusedApplicationAttribute, (CFTypeRef *)&_app) == kAXErrorSuccess && _app != NULL) {
+      [self setApp:(AXUIElementRef)_app]; // keep the Copy +1; released in dealloc
 
-    // Get Window that has focus
-    CFTypeRef _window;
-    if (AXUIElementCopyAttributeValue(app, (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window) == kAXErrorSuccess) {
-      [self setWindow:(AXUIElementRef)_window];
-      [self setInited:YES];
+      // Get Window that has focus
+      CFTypeRef _window = NULL;
+      if (AXUIElementCopyAttributeValue(app, (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window) == kAXErrorSuccess) {
+        [self setWindow:(AXUIElementRef)_window];
+        [self setInited:YES];
+      } else {
+        [self setInited:NO];
+        SlateLogger(@"ERROR: Could not fetch focused window");
+      }
     } else {
       [self setInited:NO];
-      SlateLogger(@"ERROR: Could not fetch focused window");
+      SlateLogger(@"ERROR: Could not fetch focused application");
     }
   }
 
@@ -61,12 +70,17 @@ static NSDictionary *unselectableApps = nil;
   self = [super init];
   if (self) {
     [AccessibilityWrapper createSystemWideElement];
-    [self setApp:appRef];
-    [self setWindow:windowRef];
+    [self setApp:(appRef != NULL ? (AXUIElementRef)CFRetain(appRef) : NULL)];
+    [self setWindow:(windowRef != NULL ? (AXUIElementRef)CFRetain(windowRef) : NULL)];
     [self setInited:YES];
   }
 
   return self;
+}
+
+- (void)dealloc {
+  if (app != NULL) CFRelease(app);
+  if (window != NULL) CFRelease(window);
 }
 
 + (NSPoint)getTopLeftForWindow:(AXUIElementRef)window {

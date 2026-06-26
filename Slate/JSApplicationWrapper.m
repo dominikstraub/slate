@@ -76,8 +76,11 @@
 }
 
 - (id)mainWindow {
-  AccessibilityWrapper *_aw = [[AccessibilityWrapper alloc] initWithApp:AXUIElementCreateApplication([app processIdentifier])
-                                                                 window:[AccessibilityWrapper focusedWindowInRunningApp:app]];
+  AXUIElementRef appRef = AXUIElementCreateApplication([app processIdentifier]);          // +1 owned
+  AXUIElementRef winRef = [AccessibilityWrapper focusedWindowInRunningApp:app];            // +1 owned
+  AccessibilityWrapper *_aw = [[AccessibilityWrapper alloc] initWithApp:appRef window:winRef];
+  if (appRef != NULL) CFRelease(appRef); // wrapper holds its own retained copies
+  if (winRef != NULL) CFRelease(winRef);
   return [[JSWindowWrapper alloc] initWithAccessibilityWrapper:_aw screenWrapper:sw];
 }
 

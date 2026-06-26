@@ -77,10 +77,12 @@ static JSInfoWrapper *_instance = nil;
   id pointDict = [[JSController getInstance] unmarshall:point];
   NSValue *p = [JSWrapperUtils pointFromDict:pointDict aw:aw sw:sw];
   if (p == nil) { return nil; }
-  AXUIElementRef win = [AccessibilityWrapper windowUnderPoint:[p pointValue]];
+  AXUIElementRef win = [AccessibilityWrapper windowUnderPoint:[p pointValue]];   // +1 owned
   if (win == nil || win == NULL) { return nil; }
-  AXUIElementRef app = [AccessibilityWrapper applicationForElement:win];
+  AXUIElementRef app = [AccessibilityWrapper applicationForElement:win];          // +1 owned
   AccessibilityWrapper *_aw = [[AccessibilityWrapper alloc] initWithApp:app window:win];
+  if (app != NULL) CFRelease(app); // wrapper holds its own retained copies
+  if (win != NULL) CFRelease(win);
   return [[JSWindowWrapper alloc] initWithAccessibilityWrapper:_aw screenWrapper:sw];
 }
 
