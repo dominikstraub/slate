@@ -160,7 +160,7 @@
 
   if ([tokens count] < 2) {
     SlateLogger(@"ERROR: Invalid Parameters '%@'", activateSnapshotOperation);
-    @throw([NSException exceptionWithName:@"Invalid Parameters" reason:[NSString stringWithFormat:@"Invalid Parameters in '%@'. Activate Snapshot operations require the following format: 'delete-snapshot name options'", activateSnapshotOperation] userInfo:nil]);
+    @throw([NSException exceptionWithName:@"Invalid Parameters" reason:[NSString stringWithFormat:@"Invalid Parameters in '%@'. Activate Snapshot operations require the following format: 'activate-snapshot name options'", activateSnapshotOperation] userInfo:nil]);
   }
 
   Operation *op = [[ActivateSnapshotOperation alloc] initWithName:[tokens objectAtIndex:1] options:([tokens count] > 2 ? [tokens objectAtIndex:2] : nil)];

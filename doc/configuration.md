@@ -12,7 +12,7 @@ You may also use a `.slate.js` file to configure Slate using JavaScript. This al
 
 ### Default Config File ###
 
-**Note:** If no `.slate` or `.slate.js` file exists in the current user's home directory, the [default config file](../Slate/Slate/Config/default.slate) will be used.
+**Note:** If no `.slate` or `.slate.js` file exists in the current user's home directory, the [default config file](../Slate/default.slate) will be used.
 
 ## Traditional Configuration Format ##
 
