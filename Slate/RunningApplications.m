@@ -27,9 +27,14 @@
 #import "JSApplicationWrapper.h"
 #import "SlateConfig.h"
 
+@interface RunningApplications ()
+- (void)releaseObserverForWindowNumber:(NSNumber *)windowNumber;
+- (NSNumber *)windowNumberForObserver:(AXObserverRef)observer;
+@end
+
 @implementation RunningApplications
 
-@synthesize apps, appNameToApp, windows, appToWindows, titleToWindow, unusedWindowNumbers, nextWindowNumber, pidToObserver;
+@synthesize apps, appNameToApp, windows, appToWindows, titleToWindow, unusedWindowNumbers, nextWindowNumber, pidToObserver, windowNumberToObserver;
 
 static RunningApplications *_instance = nil;
 
@@ -80,11 +85,15 @@ static void windowChanged(AXObserverRef observer, AXUIElementRef element, CFStri
   SlateLogger(@">> WINDOW CHANGED, %@ <<", notification);
   if (CFStringCompare(notification, kAXUIElementDestroyedNotification, 0) == kCFCompareEqualTo) {
     SlateLogger(@">> WINDOW DESTROYED <<");
-    AXObserverRemoveNotification(observer, element, kAXUIElementDestroyedNotification);
-    AXObserverRemoveNotification(observer, element, kAXMovedNotification);
-    AXObserverRemoveNotification(observer, element, kAXResizedNotification);
-    CFRunLoopRemoveSource([[NSRunLoop currentRunLoop] getCFRunLoop], AXObserverGetRunLoopSource(observer), kCFRunLoopDefaultMode);
-    CFRelease(observer);
+    // Release this window's observer and drop its registry entry, so the removeWindow below
+    // (via pruneWindows) can't double-release it. Fall back to a direct release if untracked.
+    NSNumber *destroyedNum = [ref windowNumberForObserver:observer];
+    if (destroyedNum != nil) {
+      [ref releaseObserverForWindowNumber:destroyedNum];
+    } else {
+      CFRunLoopRemoveSource([[NSRunLoop currentRunLoop] getCFRunLoop], AXObserverGetRunLoopSource(observer), kCFRunLoopDefaultMode);
+      CFRelease(observer);
+    }
     [ref pruneWindows];
   }
   NSString *eventName = prettyifyEventName([NSString stringWithFormat:@"%@", notification]);
@@ -92,7 +101,7 @@ static void windowChanged(AXObserverRef observer, AXUIElementRef element, CFStri
                                    payload:[[JSApplicationWrapper alloc] initWithRunningApplication:[NSRunningApplication runningApplicationWithProcessIdentifier:[AccessibilityWrapper processIdentifierOfUIElement:element]] screenWrapper:[[ScreenWrapper alloc] init]]];
 }
 
-static void registerForWindowDeath(AXUIElementRef element, RunningApplications *ref) {
+static void registerForWindowDeath(AXUIElementRef element, RunningApplications *ref, NSNumber *windowNumber) {
   // register for death event
   AXError err;
   AXObserverRef observer;
@@ -120,6 +129,9 @@ static void registerForWindowDeath(AXUIElementRef element, RunningApplications *
     }
   }
   CFRunLoopAddSource ([[NSRunLoop currentRunLoop] getCFRunLoop], AXObserverGetRunLoopSource(observer), kCFRunLoopDefaultMode);
+  // Track the observer by window number so it is released when the window leaves the model
+  // (prune / app death), not only on the destroy notification.
+  [[ref windowNumberToObserver] setObject:[NSValue valueWithPointer:observer] forKey:windowNumber];
 }
 
 // WINDOW INFO:
@@ -148,7 +160,7 @@ static void windowCreated(pid_t currPID, AXUIElementRef element, RunningApplicat
     [[ref titleToWindow] setObject:[NSMutableArray arrayWithObject:windowInfo] forKey:title];
   }
   [[[ref appToWindows] objectForKey:[NSNumber numberWithInteger:currPID]] addObject:windowInfo];
-  registerForWindowDeath(element, ref);
+  registerForWindowDeath(element, ref, [windowInfo objectAtIndex:2]);
 }
 
 + (NSRunningApplication *)focusedApp {
@@ -273,6 +285,7 @@ static void windowCallback(AXObserverRef observer, AXUIElementRef element, CFStr
     windows = [NSMutableArray array];
     appToWindows = [NSMutableDictionary dictionary];
     pidToObserver = [NSMutableDictionary dictionary];
+    windowNumberToObserver = [NSMutableDictionary dictionary];
     titleToWindow = [NSMutableDictionary dictionary];
     SlateLogger(@"------------------ Checking Running Applications ------------------");
     NSArray *appsArr = [[NSWorkspace sharedWorkspace] runningApplications];
@@ -316,7 +329,7 @@ static void windowCallback(AXObserverRef observer, AXUIElementRef element, CFStr
               [windowsForTitle addObject:windowInfo];
               [titleToWindow setObject:windowsForTitle forKey:title];
             }
-            registerForWindowDeath(window, self);
+            registerForWindowDeath(window, self, [windowInfo objectAtIndex:2]);
             nextWindowNumber++;
           }
         }
@@ -419,6 +432,7 @@ static void windowCallback(AXObserverRef observer, AXUIElementRef element, CFStr
 }
 
 - (void)removeWindow:(NSArray *)windowInfo {
+  [self releaseObserverForWindowNumber:[windowInfo objectAtIndex:2]]; // free this window's death observer (was leaked on prune)
   [unusedWindowNumbers addObject:[windowInfo objectAtIndex:2]];
   [windows removeObject:windowInfo];
   NSNumber *appPID = [NSNumber numberWithInteger:[[windowInfo objectAtIndex:1] processIdentifier]];
@@ -432,6 +446,24 @@ static void windowCallback(AXObserverRef observer, AXUIElementRef element, CFStr
     [windowsForTitle removeObject:windowInfo];
     [titleToWindow setObject:windowsForTitle forKey:[windowInfo objectAtIndex:0]];
   }
+}
+
+// Releases a per-window death observer (run-loop source + ref) and drops its registry entry.
+// Idempotent: a no-op if the window number has no tracked observer.
+- (void)releaseObserverForWindowNumber:(NSNumber *)windowNumber {
+  NSValue *v = [windowNumberToObserver objectForKey:windowNumber];
+  if (v == nil) return;
+  AXObserverRef observer = (AXObserverRef)[v pointerValue];
+  CFRunLoopRemoveSource([[NSRunLoop currentRunLoop] getCFRunLoop], AXObserverGetRunLoopSource(observer), kCFRunLoopDefaultMode);
+  CFRelease(observer);
+  [windowNumberToObserver removeObjectForKey:windowNumber];
+}
+
+- (NSNumber *)windowNumberForObserver:(AXObserverRef)observer {
+  for (NSNumber *num in [windowNumberToObserver allKeys]) {
+    if ((AXObserverRef)[[windowNumberToObserver objectForKey:num] pointerValue] == observer) return num;
+  }
+  return nil;
 }
 
 /*- (void)notificationRecieved:(id)notification {
@@ -462,6 +494,15 @@ static void windowCallback(AXObserverRef observer, AXUIElementRef element, CFStr
   NSRunningApplication *launchedApp = [[notification userInfo] objectForKey:NSWorkspaceApplicationKey];
   if ([[launchedApp localizedName] isEqualToString:@"Slate"]) return;
   NSNumber *appPID = [NSNumber numberWithInteger:[launchedApp processIdentifier]];
+  // If we somehow already track this PID, release the old app-level observer before
+  // overwriting pidToObserver below (otherwise its run-loop source + ref leak).
+  NSValue *existingObserver = [pidToObserver objectForKey:appPID];
+  if (existingObserver != nil) {
+    AXObserverRef oldObserver = (AXObserverRef)[existingObserver pointerValue];
+    CFRunLoopRemoveSource([[NSRunLoop currentRunLoop] getCFRunLoop], AXObserverGetRunLoopSource(oldObserver), kCFRunLoopDefaultMode);
+    CFRelease(oldObserver);
+    [pidToObserver removeObjectForKey:appPID];
+  }
   [appToWindows setObject:[NSMutableArray array] forKey:appPID];
   AXError err;
   AXUIElementRef sendingApp = AXUIElementCreateApplication([launchedApp processIdentifier]);

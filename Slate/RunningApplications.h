@@ -29,6 +29,7 @@
   NSInteger nextWindowNumber;
   NSMutableArray *unusedWindowNumbers;
   NSMutableDictionary *pidToObserver;
+  NSMutableDictionary *windowNumberToObserver;
 }
 
 @property NSMutableArray *apps;
@@ -39,6 +40,7 @@
 @property (assign) NSInteger nextWindowNumber;
 @property NSMutableArray *unusedWindowNumbers;
 @property NSMutableDictionary *pidToObserver;
+@property NSMutableDictionary *windowNumberToObserver;
 
 + (RunningApplications *)getInstance;
 + (BOOL)isAppSelectable:(NSRunningApplication *)app;
