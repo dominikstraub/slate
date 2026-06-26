@@ -37,7 +37,7 @@ On first launch, Slate will ask for Accessibility permissions in System Settings
 * **All deprecated APIs replaced** — modern AppKit constants, `NSRunningApplication` for process management, `SMAppService` for login items, `AXIsProcessTrustedWithOptions` for accessibility checks
 * **Removed private API usage** — no longer uses `CGSMainConnectionID`/`CGSEventIsAppUnresponsive`
 * **Hardened runtime enabled** with proper entitlements for code signing and notarization
-* All 25 unit tests passing
+* All 27 unit tests passing
 
 ## Summary of Features
 

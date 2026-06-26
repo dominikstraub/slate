@@ -29,6 +29,7 @@
 #import "ExpressionPoint.h"
 #import "SnapshotList.h"
 #import "Constants.h"
+#import "JSController.h"
 
 @interface TestRegressions : XCTestCase
 @end
@@ -88,6 +89,24 @@
   // legacy dict (no stack-size key) loads via the config default without throwing
   NSDictionary *legacy = @{NAME: @"t", SAVE_TO_DISK: @YES, STACK: @YES, SNAPSHOTS: @[]};
   XCTAssertNoThrow([SnapshotList snapshotListFromDictionary:legacy], @"legacy dict (no stack-size key) loads via config default");
+}
+
+// Issue 3: the JS-error capture seam — flat capture/clear and nested no-cross-contamination.
+- (void)testJSErrorCaptureSeam {
+  JSController *jsc = [JSController getInstance];
+  // flat: a throw inside the block is captured and returned; the slot is clear afterward.
+  NSException *flat = [jsc captureJSErrorAround:^{ [jsc evaluateRaw:@"throw new Error('errA')"]; } context:@"binding"];
+  XCTAssertNotNil(flat, @"a JS throw should be captured");
+  XCTAssertTrue([[flat reason] containsString:@"errA"], @"captured error should carry the JS message");
+  XCTAssertNil([jsc captureJSErrorAround:^{} context:@"binding"], @"slot should be clear after a take");
+  // nested: the outer error survives an inner capture-and-clear (no cross-contamination).
+  __block NSException *inner = nil;
+  NSException *outer = [jsc captureJSErrorAround:^{
+    [jsc evaluateRaw:@"throw new Error('outerA')"];
+    inner = [jsc captureJSErrorAround:^{ [jsc evaluateRaw:@"throw new Error('innerB')"]; } context:@"binding"];
+  } context:@"binding"];
+  XCTAssertTrue([[inner reason] containsString:@"innerB"], @"inner captures its own error");
+  XCTAssertTrue([[outer reason] containsString:@"outerA"], @"outer error survives the nested capture");
 }
 
 @end

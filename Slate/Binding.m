@@ -27,6 +27,7 @@
 #import "SwitchOperation.h"
 #import "SlateAppDelegate.h"
 #import "SnapshotOperation.h"
+#import "JSController.h"
 
 @implementation Binding
 
@@ -193,7 +194,13 @@ static NSDictionary *dictionary = nil;
     [[(SlateAppDelegate *)[NSApp delegate] undoSnapshotOperation] doOperation];
   }
   @try {
-    return [op doOperation];
+    // Surface JS errors during a binding's op as a popup, by re-throwing into this method's own
+    // @catch (never from deep inside a JSOperation — that could escape a CG callback and crash).
+    Operation *theOp = op; // capture locally so the block doesn't implicitly retain self
+    __block BOOL result = NO;
+    NSException *jsError = [[JSController getInstance] captureJSErrorAround:^{ result = [theOp doOperation]; } context:@"binding"];
+    if (jsError != nil) @throw jsError;
+    return result;
   } @catch (NSException *ex) {
     SlateLogger(@"   ERROR %@",[ex name]);
     NSAlert *alert = [SlateConfig warningAlertWithKeyEquivalents: [NSArray arrayWithObjects:@"Quit", @"Skip", nil]];

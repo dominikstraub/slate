@@ -29,6 +29,13 @@
 #import "JSApplicationWrapper.h"
 #import "JSOperationWrapper.h"
 
+@interface JSController ()
+// Slot for the last JS error captured by the context exceptionHandler. Main-thread-only
+// (all JS runs on the main run loop — Carbon hotkeys, the CMD+Tab event tap, and the display
+// reconfiguration callback are all on main), so no lock is needed.
+@property (copy) NSString *capturedJSError;
+@end
+
 @implementation JSController
 
 @synthesize functions;
@@ -43,8 +50,14 @@ static JSController *_instance = nil;
     self.functions = [NSMutableDictionary dictionary];
     self.eventCallbacks = [NSMutableDictionary dictionary];
     jsContext = [[JSContext alloc] init];
+    __weak JSController *weakSelf = self; // avoid a retain cycle (block is stored on our jsContext)
     jsContext.exceptionHandler = ^(JSContext *context, JSValue *exception) {
-      SlateLogger(@"JS Exception: %@", exception);
+      JSValue *lineVal = [exception valueForProperty:@"line"];
+      NSString *line = (lineVal == nil || [lineVal isUndefined]) ? @"" : [NSString stringWithFormat:@" (line %@)", lineVal];
+      NSString *text = [NSString stringWithFormat:@"%@%@", exception, line];
+      weakSelf.capturedJSError = text;
+      // Release-visible and generic — this fires for EVERY JS error, so no per-site hint here.
+      NSLog(@"[Slate] JavaScript error in ~/.slate.js: %@ — the offending action was skipped.", text);
     };
   }
   return self;
@@ -52,15 +65,54 @@ static JSController *_instance = nil;
 
 - (id)run:(NSString*)code {
   NSString* script = [NSString stringWithFormat:@"try { %@ } catch (___ex___) { 'EXCEPTION: '+___ex___; }", code];
-  JSValue *data = [jsContext evaluateScript:script];
+  JSContext *ctx = jsContext; // capture locally so the block doesn't implicitly retain self
+  __block JSValue *data = nil;
+  NSException *jsError = [self captureJSErrorAround:^{ data = [ctx evaluateScript:script]; } context:@"config"];
   if (data != nil && ![data isUndefined]) {
     SlateLogger(@"%@", data);
     NSString *str = [data toString];
     if ([str hasPrefix:@"EXCEPTION: "]) {
-      @throw([NSException exceptionWithName:@"JavaScript Error" reason:str userInfo:nil]);
+      @throw([NSException exceptionWithName:@"JavaScript error in your Slate config"
+                                     reason:[NSString stringWithFormat:@"%@\n\nFix it in ~/.slate.js and reload Slate's config.", str]
+                                   userInfo:nil]);
     }
+  } else if (jsError != nil) {
+    // data is nil and the handler captured an error the JS-level try/catch couldn't (e.g. a syntax error) — surface it.
+    @throw jsError;
   }
   return [self unmarshall:data];
+}
+
+// Reads and clears the last captured JS error.
+- (NSString *)takeCapturedJSError {
+  NSString *e = self.capturedJSError;
+  self.capturedJSError = nil;
+  return e;
+}
+
+// Runs `block`; if JS threw during it, returns a context-worded NSException, else nil. Single seam
+// for the save/clear/take/restore of the captured-error slot, so nested evaluations (e.g. a binding
+// callback that slate.source()s) don't cross-contaminate. Main-thread-only; no lock needed.
+- (NSException *)captureJSErrorAround:(void (^)(void))block context:(NSString *)context {
+  NSString *prev = self.capturedJSError;
+  self.capturedJSError = nil;
+  NSString *captured = nil;
+  @try {
+    block();
+    captured = [self takeCapturedJSError];
+  } @finally {
+    self.capturedJSError = prev; // restore the outer slot even if `block` threw an ObjC exception
+  }
+  if (captured == nil) return nil;
+  NSString *reason = [@"binding" isEqualToString:context]
+    ? [NSString stringWithFormat:@"%@\n\nThis is an error in your ~/.slate.js. A common cause is acting on a window that wasn't available — guard it with `if (win) { ... }`.", captured]
+    : [NSString stringWithFormat:@"%@\n\nFix it in ~/.slate.js and reload Slate's config.", captured];
+  return [NSException exceptionWithName:@"JavaScript error in your Slate config" reason:reason userInfo:nil];
+}
+
+// Test hook: evaluate raw JS (an uncaught throw routes to the exceptionHandler above).
+- (JSValue *)evaluateRaw:(NSString *)script {
+  return [jsContext evaluateScript:script];
 }
 
 - (NSString *)genFuncKey {

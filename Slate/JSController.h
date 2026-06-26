@@ -53,6 +53,8 @@ JSExportAs(on, - (void)on:(NSString *)what do:(JSValue *)callback);
 - (id)runFunction:(JSValue *)function;
 - (id)runFunction:(JSValue *)function withArg:(id)arg;
 - (id)runFunction:(JSValue *)function withArg:(id)arg secondArg:(id)arg2;
+- (NSException *)captureJSErrorAround:(void (^)(void))block context:(NSString *)context;
+- (JSValue *)evaluateRaw:(NSString *)script;
 - (id)unmarshall:(id)obj;
 - (id)marshall:(id)obj;
 - (NSString *)jsTypeof:(id)obj;
