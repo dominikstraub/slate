@@ -366,6 +366,7 @@ static JSController *_instance = nil;
       SlateLogger(@"User selected exit");
       [NSApp terminate:nil];
     }
+    return; // invalid event: if the user chose Skip, do not register the callback
   }
   if ([what isEqualToString:@"windowMoved"]) {
     [[SlateConfig getInstance] setConfig:JS_RECEIVE_MOVE_EVENT to:@"true"];

@@ -403,6 +403,10 @@ static SlateConfig *_instance = nil;
     NSError *e = nil;
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *snapshotsDict = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&e];
+    if (e != nil || ![snapshotsDict isKindOfClass:[NSDictionary class]]) {
+      SlateLogger(@"ERROR: Could not load snapshots (invalid JSON): %@", e != nil ? [e localizedDescription] : @"top-level is not an object");
+      return YES; // nothing valid to load; don't feed malformed data to snapshotsFromDictionary
+    }
     [self snapshotsFromDictionary:snapshotsDict];
     return YES;
 }

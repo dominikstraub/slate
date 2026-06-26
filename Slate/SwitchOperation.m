@@ -179,7 +179,7 @@ static const NSString *DEFAULT_HIDE_KEY = @"h";
       [[switchersToViews objectAtIndex:switcherId] addObject:appView];
       i++;
     }
-    currentApp = [apps count] > 0 ? 1 : 0;
+    currentApp = [apps count] > 1 ? 1 : 0; // selecting index 1 requires at least 2 app views
     [[[switchersToViews objectAtIndex:switcherId] objectAtIndex:currentApp] setSelected:YES];
     switcherId++;
   }

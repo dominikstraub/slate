@@ -77,6 +77,12 @@
       dim = [[style componentsSeparatedByString:COLON] objectAtIndex:1];
     }
   }
+  // The corner math below splits dim on ';' and indexes [0] and [1]; a malformed
+  // resize expression without a ';' would crash, so fall back to the default.
+  if ([[dim componentsSeparatedByString:SEMICOLON] count] < 2) {
+    SlateLogger(@"ERROR: Invalid corner resize expression '%@' in '%@'", dim, cornerOperation);
+    dim = @"windowSizeX;windowSizeY";
+  }
 
   if ([direction isEqualToString:TOP_LEFT]) {
     tl = @"screenOriginX;screenOriginY";

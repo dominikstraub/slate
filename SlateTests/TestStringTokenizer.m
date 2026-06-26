@@ -141,4 +141,16 @@
   XCTAssertTrue([[arr objectAtIndex:1] isEqualToString:@"tokenize\t\t  \"me\""], @"wtf");
 }
 
+- (void)testRemoveQuotes {
+  NSCharacterSet *cs = [NSCharacterSet characterSetWithCharactersInString:@"\"'"];
+  XCTAssertTrue([[StringTokenizer removeQuotes:@"'foo'" quoteChars:cs] isEqualToString:@"foo"], @"strips matching single quotes");
+  XCTAssertTrue([[StringTokenizer removeQuotes:@"\"bar\"" quoteChars:cs] isEqualToString:@"bar"], @"strips matching double quotes");
+  XCTAssertTrue([[StringTokenizer removeQuotes:@"foo" quoteChars:cs] isEqualToString:@"foo"], @"unquoted unchanged");
+  XCTAssertTrue([[StringTokenizer removeQuotes:@"'foo" quoteChars:cs] isEqualToString:@"'foo"], @"unmatched quote unchanged");
+  XCTAssertTrue([[StringTokenizer removeQuotes:@"''" quoteChars:cs] isEqualToString:@""], @"two quotes -> empty");
+  // edge cases that previously raised NSRangeException:
+  XCTAssertTrue([[StringTokenizer removeQuotes:@"" quoteChars:cs] isEqualToString:@""], @"empty string must not crash");
+  XCTAssertTrue([[StringTokenizer removeQuotes:@"'" quoteChars:cs] isEqualToString:@"'"], @"lone quote must not crash");
+}
+
 @end

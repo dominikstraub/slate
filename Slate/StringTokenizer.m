@@ -157,6 +157,7 @@
 }
 
 + (NSString *)removeQuotes:(NSString *)s quoteChars:(NSCharacterSet *)quoteChars {
+  if ([s length] < 2) return s; // need at least an opening + closing quote; avoids characterAtIndex:/range crashes
   if ([StringTokenizer isQuoteChar:[s characterAtIndex:0] quoteChars:quoteChars] &&
       [StringTokenizer isQuoteChar:[s characterAtIndex:([s length] - 1)] quoteChars:quoteChars]) {
     return [s substringWithRange:NSMakeRange(1, [s length]-2)];

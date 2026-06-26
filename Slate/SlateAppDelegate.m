@@ -294,8 +294,8 @@ static EventHandlerRef modifiersEvent;
       InstallEventHandler(GetEventMonitorTarget(), &OnModifiersChangedEvent, 1, &modifiersChangedType, (__bridge void *)self, &modifiersEvent);
     }
     [binding doOperation];
-    if (!(cmdTabBinding > 0 && [[[SlateConfig getInstance] bindings] objectAtIndex:cmdTabBinding] == binding) &&
-        !(cmdShiftTabBinding > 0 && [[[SlateConfig getInstance] bindings] objectAtIndex:cmdShiftTabBinding] == binding) &&
+    if (!(cmdTabBinding >= 0 && [[[SlateConfig getInstance] bindings] objectAtIndex:cmdTabBinding] == binding) &&
+        !(cmdShiftTabBinding >= 0 && [[[SlateConfig getInstance] bindings] objectAtIndex:cmdShiftTabBinding] == binding) &&
         ([binding repeat] || [[binding op] isKindOfClass:[SwitchOperation class]])) {
       @synchronized(timerLock) {
         if (currentTimer != nil) {
@@ -440,7 +440,7 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-  if (cmdTabBinding > 0 || cmdShiftTabBinding > 0) {
+  if (cmdTabBinding >= 0 || cmdShiftTabBinding >= 0) {
     CFMachPortRef keyDownEventTap;
     CFRunLoopSourceRef keyDownRunLoopSource;
     keyDownEventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, 0, CGEventMaskBit(kCGEventKeyDown), EatAppSwitcherCallback, (__bridge void *)self);

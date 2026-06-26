@@ -17,7 +17,7 @@
     },
 
     configAll: function(configMap) {
-      for (key in configMap) {
+      for (var key in configMap) {
         slate.config(key, configMap[key]);
       }
     },
@@ -32,7 +32,7 @@
     },
 
     bindAll: function(bindMap) {
-      for(key in bindMap) {
+      for (var key in bindMap) {
         if (_.isArray(bindMap[key]) && _.size(bindMap[key]) >= 2) {
           slate.bind(key, bindMap[key][0], bindMap[key][1]);
         } else if (_.isArray(bindMap[key]) && _.size(bindMap[key]) == 1) {
@@ -79,10 +79,10 @@
 
     layout : function(name, hash) {
       if (!_.isString(name)) {
-        throw "layout name must be a string. Was: "+path;
+        throw "layout name must be a string. Was: "+name;
       }
       if (!_.isObject(hash)) {
-        throw "layout app hash should be a hash, was: "+path;
+        throw "layout app hash should be a hash, was: "+hash;
       }
       return _controller.layout(name, hash);
     },

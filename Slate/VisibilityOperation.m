@@ -94,7 +94,7 @@
     } else {
       app = [[[RunningApplications getInstance] appNameToApp] objectForKey:appName];
     }
-    [self applyVisibilityToApp:app];
+    if (app != nil) [self applyVisibilityToApp:app]; // skip unresolved app names
   }
   return YES;
 }

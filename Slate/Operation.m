@@ -162,7 +162,13 @@
 
 - (id)dup:(NSDictionary *)_options {
   NSMutableDictionary *newOptions = [NSMutableDictionary dictionaryWithDictionary:[self options]];
-  [newOptions addEntriesFromDictionary:[self dynamicOptions]];
+  // Re-resolve dynamic (JS-function) options back to their JSValue so the dup'd operation
+  // re-registers them as dynamic, instead of storing the raw jsKey string as a literal option.
+  for (NSString *key in [[self dynamicOptions] allKeys]) {
+    if ([_options objectForKey:key] != nil) { continue; } // an explicit override wins
+    JSValue *func = [[[JSController getInstance] functions] objectForKey:[[self dynamicOptions] objectForKey:key]];
+    if (func != nil) { [newOptions setObject:func forKey:key]; }
+  }
   [newOptions addEntriesFromDictionary:_options];
   return [Operation operationWithName:[self opName] options:newOptions];
 }
@@ -171,7 +177,7 @@
   Operation *operation = [Operation operationWithName:op options:options];
   BOOL success = NO;
   if (operation != nil) {
-    [operation doOperationWithAccessibilityWrapper:aw screenWrapper:sw];
+    success = [operation doOperationWithAccessibilityWrapper:aw screenWrapper:sw];
     operation = nil; // force release of operation object
   }
   return success;
@@ -180,6 +186,7 @@
 + (id)operationFromString:(NSString *)opString {
   NSMutableArray *tokens = [[NSMutableArray alloc] initWithCapacity:10];
   [StringTokenizer tokenize:opString into:tokens maxTokens:2];
+  if ([tokens count] == 0) return nil; // empty/whitespace-only op string
   NSString *op = [tokens objectAtIndex:0];
   Operation *operation = nil;
   if ([op isEqualToString:MOVE]) {

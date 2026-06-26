@@ -128,7 +128,7 @@
     SlateLogger(@"I see application '%@' with pid '%d'", appName, appPID);
 
     NSArray *operations = [[layout appStates] objectForKey:appName];
-    if (operations == nil) {
+    if (operations == nil || [operations count] == 0) { // empty ops would make the repeat/repeatLast modulo below divide by zero
       continue;
     }
 

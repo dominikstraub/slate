@@ -134,7 +134,7 @@ static NSDictionary *dictionary = nil;
           if (_theModalKey != nil) {
             theModalKey = _theModalKey;
           } else {
-            theModifiers += [Binding modifierFromString:mod];
+            theModifiers |= [Binding modifierFromString:mod];
           }
           mod = [modEnum nextObject];
         }
@@ -181,7 +181,7 @@ static NSDictionary *dictionary = nil;
   }
 
   if ([theOp isKindOfClass:[SwitchOperation class]]) {
-    [(SwitchOperation *)op setModifiers:modifiers];
+    [(SwitchOperation *)theOp setModifiers:modifiers]; // `op` is still nil here; set on theOp
   }
 
   op = theOp;

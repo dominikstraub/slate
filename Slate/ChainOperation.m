@@ -67,9 +67,11 @@
   NSInteger opRun = 0;
   if ([aw inited]) {
     opRun = [self getNextOperation:aw];
-    success = [[operations objectAtIndex:opRun] doOperationWithAccessibilityWrapper:aw screenWrapper:sw];
-    if (success)
-      [self afterComplete:aw opRun:opRun];
+    if (opRun >= 0 && opRun < (NSInteger)[operations count]) {
+      success = [[operations objectAtIndex:opRun] doOperationWithAccessibilityWrapper:aw screenWrapper:sw];
+      if (success)
+        [self afterComplete:aw opRun:opRun];
+    }
   }
   return success;
 }

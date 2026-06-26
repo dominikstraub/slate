@@ -118,6 +118,7 @@
 
 // Assumes well-formed resize +100 or -10%
 - (NSInteger)resizeStringToInt:(NSString *)resize withValue:(NSInteger) val {
+  if ([resize length] == 0) return 0; // empty expression: stringByReplacingCharactersInRange below would crash
   NSInteger sign = [resize hasPrefix:MINUS] ? -1 : 1;
   NSString *magnitude = [resize stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:EMPTY];
 

@@ -134,7 +134,7 @@ static NSString *resolutions = nil;
 }
 
 - (NSRect)getScreenVisibleRectForRef:(NSInteger)screenRefId {
-  NSInteger screenId = [[SlateConfig getInstance] getBoolConfig:ORDER_SCREENS_LEFT_TO_RIGHT] ? [[leftToRightToDefault objectAtIndex:screenRefId] integerValue] : screenRefId;
+  NSInteger screenId = ([[SlateConfig getInstance] getBoolConfig:ORDER_SCREENS_LEFT_TO_RIGHT] && screenRefId >= 0 && screenRefId < (NSInteger)[leftToRightToDefault count]) ? [[leftToRightToDefault objectAtIndex:screenRefId] integerValue] : screenRefId;
   return [self getScreenVisibleRect:screenId];
 }
 
@@ -143,7 +143,7 @@ static NSString *resolutions = nil;
 }
 
 - (NSRect)getScreenRectForRef:(NSInteger)screenRefId {
-  NSInteger screenId = [[SlateConfig getInstance] getBoolConfig:ORDER_SCREENS_LEFT_TO_RIGHT] ? [[leftToRightToDefault objectAtIndex:screenRefId] integerValue] : screenRefId;
+  NSInteger screenId = ([[SlateConfig getInstance] getBoolConfig:ORDER_SCREENS_LEFT_TO_RIGHT] && screenRefId >= 0 && screenRefId < (NSInteger)[leftToRightToDefault count]) ? [[leftToRightToDefault objectAtIndex:screenRefId] integerValue] : screenRefId;
   return [self getScreenRect:screenId];
 }
 
@@ -204,7 +204,7 @@ static NSString *resolutions = nil;
     NSArray *tokens = [screenRef componentsSeparatedByString:COLON];
     if ([tokens count] < 2) return ID_IGNORE_SCREEN;
     NSInteger leftToRightId = [[tokens objectAtIndex:1] integerValue];
-    screenId = (leftToRightId < ID_MAIN_SCREEN || leftToRightId > [screens count]) ? leftToRightId : [[leftToRightToDefault objectAtIndex:leftToRightId] integerValue];
+    screenId = (leftToRightId < ID_MAIN_SCREEN || leftToRightId >= (NSInteger)[screens count]) ? leftToRightId : [[leftToRightToDefault objectAtIndex:leftToRightId] integerValue];
   } else {
     NSInteger screenRefInt = [screenRef integerValue];
     if (screenRefInt < ID_MAIN_SCREEN || screenRefInt >= [screens count]) {
@@ -263,7 +263,7 @@ static NSString *resolutions = nil;
 }
 
 - (BOOL)isMainScreenRef:(NSInteger)screenRefId {
-  NSInteger screenId = [[SlateConfig getInstance] getBoolConfig:ORDER_SCREENS_LEFT_TO_RIGHT] ? [[leftToRightToDefault objectAtIndex:screenRefId] integerValue] : screenRefId;
+  NSInteger screenId = ([[SlateConfig getInstance] getBoolConfig:ORDER_SCREENS_LEFT_TO_RIGHT] && screenRefId >= 0 && screenRefId < (NSInteger)[leftToRightToDefault count]) ? [[leftToRightToDefault objectAtIndex:screenRefId] integerValue] : screenRefId;
   return [self isMainScreen:screenId];
 }
 
