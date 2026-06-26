@@ -4,7 +4,7 @@
 
 Modernized fork by Dominik Straub ([dominikstraub/slate](https://github.com/dominikstraub/slate))
 
-- Requires macOS 26.4 (Tahoe) or later, Apple Silicon only
+- Requires macOS 26.5 (Tahoe) or later, Apple Silicon only
 - Replaced WebView (WebKit 1) with JavaScriptCore (`JSContext`/`JSValue`/`JSExport`)
 - Removed Sparkle auto-update framework and legacy build scripts
 - Replaced all deprecated APIs with modern equivalents
