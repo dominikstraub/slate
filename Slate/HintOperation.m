@@ -118,8 +118,9 @@ static const UInt32 ESC_HINT_ID = 10001;
   NSScreen *screen = [[sw screens] objectAtIndex:screenId];
   // convert top left to screen relative for the NSWindow
   NSPoint tl = [sw convertTopLeftToScreenRelative:wTL screen:screenId];
-  // now need to flip y coord
-  tl.y = [screen frame].size.height - ([sw isMainScreen:screenId] ? MAIN_MENU_HEIGHT : 0) - tl.y;
+  // now need to flip y coord (subtract the real menu-bar/notch top inset on the main screen)
+  CGFloat menuBarInset = [sw isMainScreen:screenId] ? (NSMaxY([screen frame]) - NSMaxY([screen visibleFrame])) : 0;
+  tl.y = [screen frame].size.height - menuBarInset - tl.y;
   NSMutableDictionary *values = [[sw getScreenAndWindowValues:screenId window:NSMakeRect(tl.x, tl.y, wSize.width, wSize.height) newSize:wSize] mutableCopy];
   float whHeight = [ExpressionPoint expToFloat:[[SlateConfig getInstance] getConfig:WINDOW_HINTS_HEIGHT] withDict:values];
   float whWidth = [ExpressionPoint expToFloat:[[SlateConfig getInstance] getConfig:WINDOW_HINTS_WIDTH] withDict:values];
