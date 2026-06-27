@@ -97,7 +97,12 @@
   NSRect cwRect = NSMakeRect(cwTL.x, cwTL.y, cwSize.width, cwSize.height);
   NSString *cwTitle = [AccessibilityWrapper getTitle:[caAW window]];
   NSRect checkRect;
-  NSInteger focusCheckWidth = [[SlateConfig getInstance] getIntegerConfig:FOCUS_CHECK_WIDTH];
+  // Read the step once and clamp to >= 1: a 0/negative focusCheckWidth config would
+  // make the increment below never advance (or move away from the max), spinning the
+  // main thread forever.
+  NSInteger step = [[SlateConfig getInstance] getIntegerConfig:FOCUS_CHECK_WIDTH];
+  if (step <= 0) step = [FOCUS_CHECK_WIDTH_DEFAULT integerValue];
+  NSInteger focusCheckWidth = step;
   while (focusCheckWidth <= [[SlateConfig getInstance] getIntegerConfig:FOCUS_CHECK_WIDTH_MAX]) {
     SlateLogger(@"Checking for adjacent windows with width=%i",(int)focusCheckWidth);
     if (direction == DIRECTION_UP) checkRect = NSMakeRect(cwTL.x, cwTL.y-focusCheckWidth, cwSize.width, focusCheckWidth);
@@ -145,7 +150,7 @@
         SlateLogger(@" Checking window in %@ in direction %i with rect: (%f,%f %f,%f), title: [%@]",[runningApp localizedName],(int)direction,wTL.x,wTL.y,wSize.width,wSize.height,wTitle);
         NSRect windowRect = NSMakeRect(wTL.x, wTL.y, wSize.width, wSize.height);
 
-        if ([wTitle isEqualToString:cwTitle] && NSEqualRects(windowRect, cwRect) && NSEqualPoints(wTL, cwTL)) {
+        if ([wTitle isEqualToString:cwTitle] && NSEqualRects(windowRect, cwRect)) {
           SlateLogger(@" Ignoring current window");
           continue;
         }
@@ -197,7 +202,7 @@
     }
     if (windowToFocus) CFRelease(windowToFocus);
     for (NSValue *v in allocatedAppRefs) CFRelease([v pointerValue]);
-    focusCheckWidth += [[SlateConfig getInstance] getIntegerConfig:FOCUS_CHECK_WIDTH];
+    focusCheckWidth += step;
   }
   return NO;
 }

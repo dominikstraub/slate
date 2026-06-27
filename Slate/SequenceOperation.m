@@ -56,8 +56,12 @@
 
 - (BOOL) doOperationWithAccessibilityWrapper:(AccessibilityWrapper *)aw screenWrapper:(ScreenWrapper *)sw {
   BOOL success = YES;
+  // When this sequence owns the wrapper (top-level invocation, aw == nil), re-grab
+  // the focused window for each '|'-separated group so a `focus` in a prior group
+  // is reflected. A passed-in (nested) wrapper is reused unchanged.
+  BOOL ownAW = (aw == nil);
   for (NSInteger i = 0; i < [[self operations] count]; i++) {
-    if (aw == nil)
+    if (ownAW)
       aw = [[AccessibilityWrapper alloc] init];
     if (![aw inited])
       return NO;
