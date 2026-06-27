@@ -148,16 +148,8 @@
 }
 
 - (void)parseOption:(NSString *)name value:(id)val {
-  // all options should be strings
-  if (val == nil) { return; }
-  NSString *value = nil;
-  if ([val isKindOfClass:[NSString class]]) {
-    value = val;
-  } else if ([val isKindOfClass:[NSNumber class]]) {
-    value = [val stringValue];
-  } else {
-    @throw([NSException exceptionWithName:[NSString stringWithFormat:@"Invalid %@", name] reason:[NSString stringWithFormat:@"Invalid %@ '%@'", name, val] userInfo:nil]);
-  }
+  NSString *value = [self stringFromOptionValue:val forOption:name];
+  if (value == nil) { return; }
   [[self options] setValue:value forKey:name];
   if ([name isEqualToString:OPT_X]) {
     [[self topLeft] setX:value];

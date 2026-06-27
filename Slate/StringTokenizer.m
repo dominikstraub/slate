@@ -51,7 +51,7 @@
 + (void)tokenize:(NSString *)s into:(NSMutableArray *)array quoteChars:(NSCharacterSet *)quotes {
   NSMutableString *token = [[NSMutableString alloc] initWithCapacity:10];
   BOOL quoteSeen = NO;
-  char quoteChar = '.';
+  unichar quoteChar = '.';
   for (NSInteger i = 0; i < [s length]; i++) {
     if ([self isSpaceChar:[s characterAtIndex:i]]) {
       if (![token isEqualToString:@""] && !quoteSeen) {

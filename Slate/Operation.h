@@ -43,6 +43,7 @@
 - (void)beforeInitOptions;
 - (void)initOptions:(NSDictionary *)_options;
 - (void)parseOption:(NSString *)name value:(id)value;
+- (NSString *)stringFromOptionValue:(id)value forOption:(NSString *)name;
 - (void)evalOptionsWithAccessibilityWrapper:(AccessibilityWrapper *)aw screenWrapper:(ScreenWrapper *)sw;
 - (void)afterEvalOptions;
 - (id)dup:(NSDictionary *)_options;

@@ -130,6 +130,16 @@
   // OVERRIDE - runs while setting options (both normal and dynamic)
 }
 
+// Coerce a config option value to a string for parseOption: implementations.
+// NSString passes through; an NSNumber is stringified (JS configs deliver numeric
+// literals as NSNumber); anything else throws "Invalid <name>". Returns nil for nil.
+- (NSString *)stringFromOptionValue:(id)value forOption:(NSString *)name {
+  if (value == nil) return nil;
+  if ([value isKindOfClass:[NSString class]]) return value;
+  if ([value isKindOfClass:[NSNumber class]]) return [value stringValue];
+  @throw([NSException exceptionWithName:[NSString stringWithFormat:@"Invalid %@", name] reason:[NSString stringWithFormat:@"Invalid %@ '%@'", name, value] userInfo:nil]);
+}
+
 - (void)afterEvalOptions {
   // OVERRIDE - runs after all options are set
 }

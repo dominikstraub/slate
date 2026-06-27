@@ -365,9 +365,9 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
       NSString *title = [AccessibilityWrapper getTitle:_window];
       AXUIElementRef appRef = [AccessibilityWrapper applicationForElement:(AXUIElementRef)_window];
       BOOL isWindowMinimizedOrHidden = [AccessibilityWrapper isWindowMinimizedOrHidden:_window inApp:appRef];
-      if (title == nil || isWindowMinimizedOrHidden) {
+      if (title == nil || [EMPTY isEqualToString:title] || isWindowMinimizedOrHidden) {
         CFRelease(appRef);
-        continue; // skip nil title and minimized/hidden windows because they are invisible
+        continue; // skip nil/empty title and minimized/hidden windows because they are invisible
       }
       SlateLogger(@"  Hinting Window: %@", title);
       [self createHintWindowFor:(AXUIElementRef)_window inApp:appRef screenWrapper:sw];

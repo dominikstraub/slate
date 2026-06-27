@@ -149,12 +149,9 @@
   return NSMakeSize(dimX,dimY);
 }
 
-- (void)parseOption:(NSString *)name value:(NSString *)value {
-  // all options should be strings
+- (void)parseOption:(NSString *)name value:(id)val {
+  NSString *value = [self stringFromOptionValue:val forOption:name];
   if (value == nil) { return; }
-  if (![value isKindOfClass:[NSString class]]) {
-    @throw([NSException exceptionWithName:[NSString stringWithFormat:@"Invalid %@", name] reason:[NSString stringWithFormat:@"Invalid %@ '%@'", name, value] userInfo:nil]);
-  }
   if ([name isEqualToString:OPT_WIDTH]) {
     [self setXResize:value];
   } else if ([name isEqualToString:OPT_HEIGHT]) {

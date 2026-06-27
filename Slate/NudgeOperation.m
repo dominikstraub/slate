@@ -36,7 +36,10 @@
 }
 
 - (void)parseOption:(NSString *)name value:(NSString *)value {
-  // all options should be strings
+  // Nudge x/y are SIGNED delta expressions (e.g. "+10%", "-100") appended to the
+  // window origin, so a bare NSNumber can't carry the required sign — reject
+  // non-strings here rather than build a malformed expression (unlike move/resize,
+  // which coerce an NSNumber via Operation's stringFromOptionValue:).
   if (value == nil) { return; }
   if (![value isKindOfClass:[NSString class]]) {
     @throw([NSException exceptionWithName:[NSString stringWithFormat:@"Invalid %@", name] reason:[NSString stringWithFormat:@"Invalid %@ '%@'", name, value] userInfo:nil]);

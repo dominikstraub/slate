@@ -94,6 +94,16 @@
   XCTAssertTrue([tlx containsString:@"-(screenSizeX-100)"], @"top-right X must subtract the parenthesized resize expression, got: %@", tlx);
 }
 
+// Phase 5: a resize op built from a JS-style config with numeric (NSNumber) width/
+// height must parse via the shared Operation coercion instead of throwing (move
+// already accepted numbers; resize used to throw).
+- (void)testResizeAcceptsNumericOptions {
+  NSDictionary *opts = @{@"width": @100, @"height": @50}; // commas in the literal would break the macro
+  id op = nil;
+  XCTAssertNoThrow(op = [Operation operationWithName:@"resize" options:opts], @"numeric resize options should coerce, not throw");
+  XCTAssertTrue([op isKindOfClass:[ResizeOperation class]], @"resize builds a ResizeOperation");
+}
+
 // Phase 4: Binding +keyCodeForString: returns a code for a known key and nil for an
 // unknown one, so callers can reject bad input instead of coercing nil to keycode 0 ('a').
 - (void)testKeyCodeForString {

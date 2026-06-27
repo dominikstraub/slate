@@ -334,6 +334,8 @@ static JSController *_instance = nil;
   id name = nil;
   if ([action isKindOfClass:[NSString class]]) {
     name = action;
+  } else if ([action isKindOfClass:[Operation class]]) {
+    name = action; // a native operation (e.g. from slate.operation(...)) — pass through, don't drop it
   } else if ([action isKindOfClass:[JSValue class]]) {
     NSString *type = [self jsTypeof:action];
     if ([@"function" isEqualToString:type]) {
