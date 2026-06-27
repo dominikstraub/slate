@@ -1,10 +1,34 @@
 # Changelog
 
+## 1.4
+
+- Raised the minimum to macOS 26.5 (Tahoe)
+- Bug fixes:
+  - Restored the JavaScript config error popup that went silent in the 1.3 JavaScriptCore migration — errors in `~/.slate.js` (including syntax errors on load) again surface a Quit/Skip dialog pointing at the offending script
+  - Fixed CMD+Tab interception silently dying after a slow operation or modal alert; the event tap now re-enables itself instead of staying dead until relaunch
+  - Fixed directional `focus` acting on a freed window (use-after-free)
+  - Fixed `down`/`below` screen references resolving to the wrong screen
+  - Fixed `sequence` collapsing `|` (next window) into `>` (same window)
+  - Fixed `corner` mispositioning windows when the resize used a top-level `+`/`-` expression
+  - Fixed window-hint positioning on notched displays and with the menu bar auto-hidden (derives the real top inset instead of a hardcoded 22px)
+  - Fixed `grid` drag selection (wrong drag coordinates; the first bottom-left cell was unselectable)
+  - Fixed the undo stack ignoring and not persisting `undoMaxStackSize` (it grew unbounded)
+  - Numeric width/height in JavaScript `resize` options no longer abort config load
+  - Shell operations no longer deadlock on large output (>64KB) or on commands that read stdin, report launch failures instead of false success, and expand `~` / resolve bare executables consistently
+  - Invalid key names are now rejected instead of silently binding to `a`, and failed hotkey registrations are logged
+  - Corrupt or hand-edited snapshot files are skipped on load instead of crashing at launch
+  - Numerous additional crash guards and logic fixes across operations and config
+- Stability and performance:
+  - Hardened memory management: `AccessibilityWrapper` now owns its AX references, per-window observers are tracked and released, and several AX leaks and use-after-frees were fixed
+  - Hoisted invariant Accessibility/regex/JavaScript work off the synchronous operation hot paths
+- Reconciled the user documentation under `doc/` with the code (corrected config defaults, documented previously-undocumented keys, fixed dead links)
+- Developer tooling: added a `clang-format` config, a pre-commit format check, and a root `Makefile` (`make setup`/`format`/`analyze`/`tidy`/`test`); expanded the test suite to 33 tests
+
 ## 1.3
 
 Modernized fork by Dominik Straub ([dominikstraub/slate](https://github.com/dominikstraub/slate))
 
-- Requires macOS 26.5 (Tahoe) or later, Apple Silicon only
+- Requires macOS 26.4 (Tahoe) or later, Apple Silicon only
 - Replaced WebView (WebKit 1) with JavaScriptCore (`JSContext`/`JSValue`/`JSExport`)
 - Removed Sparkle auto-update framework and legacy build scripts
 - Replaced all deprecated APIs with modern equivalents
