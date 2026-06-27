@@ -83,18 +83,17 @@
       CFRelease(appRef);
       continue;
     }
-    CFMutableArrayRef windowsArr = CFArrayCreateMutableCopy(kCFAllocatorDefault, 0, windowsArrRef);
-    CFRelease(windowsArrRef);
-    for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
-      SlateLogger(@" Printing Window: %@", [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)]);
-      NSString *title = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];
+    for (NSInteger i = 0; i < CFArrayGetCount(windowsArrRef); i++) {
+      AXUIElementRef windowRef = (AXUIElementRef)CFArrayGetValueAtIndex(windowsArrRef, i);
+      NSString *title = [AccessibilityWrapper getTitle:windowRef]; // fetch once (was queried twice via AX)
+      SlateLogger(@" Printing Window: %@", title);
       if ([title isEqualToString:@""]) continue;
-      AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appRef window:CFArrayGetValueAtIndex(windowsArr, i)];
+      AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appRef window:windowRef];
       NSSize size = [aw getCurrentSize];
       NSPoint tl = [aw getCurrentTopLeft];
       [snapshot addWindow:[[WindowSnapshot alloc] initWithAppName:appName title:title topLeft:tl size:size] app:appName];
     }
-    CFRelease(windowsArr);
+    CFRelease(windowsArrRef);
     CFRelease(appRef);
   }
   [[SlateConfig getInstance] addSnapshot:snapshot name:name saveToDisk:saveToDisk isStack:isStack stackSize:stackSize];

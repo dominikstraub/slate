@@ -568,9 +568,12 @@ static JSController *_instance = nil;
 - (NSDictionary *)jsToDictionary:(JSValue *)obj {
   NSMutableDictionary *ret = [NSMutableDictionary dictionary];
   if (obj == nil || [obj isUndefined]) { return ret; }
-  // Use Object.keys() to get property names
-  JSValue *keysFunc = [jsContext evaluateScript:@"Object.keys"];
-  JSValue *keysResult = [keysFunc callWithArguments:@[obj]];
+  // Cache Object.keys per context (re-fetched only if the JSContext is recreated,
+  // which today only happens on relaunch). Avoids an evaluateScript per object node.
+  if (objectKeysFunc == nil || objectKeysFunc.context != jsContext) {
+    objectKeysFunc = [jsContext evaluateScript:@"Object.keys"];
+  }
+  JSValue *keysResult = [objectKeysFunc callWithArguments:@[obj]];
   NSArray *keyArr = [self jsToArray:keysResult];
   for (NSString *key in keyArr) {
     JSValue *ele = [obj valueForProperty:key];

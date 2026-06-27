@@ -109,15 +109,14 @@
       CFRelease(appRef);
       continue;
     }
-    CFMutableArrayRef windowsArr = CFArrayCreateMutableCopy(kCFAllocatorDefault, 0, windowsArrRef);
-    CFRelease(windowsArrRef);
     NSArray *windowSnapshots = [[snapshot apps] objectForKey:appName];
     // Check windows
-    for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
-      SlateLogger(@" Checking Window: %@", [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)]);
-      NSString *title = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];
+    for (NSInteger i = 0; i < CFArrayGetCount(windowsArrRef); i++) {
+      AXUIElementRef windowRef = (AXUIElementRef)CFArrayGetValueAtIndex(windowsArrRef, i);
+      NSString *title = [AccessibilityWrapper getTitle:windowRef]; // fetch once (was queried twice via AX)
+      SlateLogger(@" Checking Window: %@", title);
       if ([title isEqualToString:@""]) continue;
-      AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appRef window:CFArrayGetValueAtIndex(windowsArr, i)];
+      AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:appRef window:windowRef];
       // Find best snapshot
       WindowSnapshot *bestSnapshot = nil;
       if ([[[SlateConfig getInstance] getConfig:SNAPSHOT_TITLE_MATCH app:appName] isEqualToString:SEQUENTIAL]) {
@@ -143,7 +142,7 @@
       [aw moveWindow:[bestSnapshot topLeft]];
       [aw resizeWindow:[bestSnapshot size]];
     }
-    CFRelease(windowsArr);
+    CFRelease(windowsArrRef);
     CFRelease(appRef);
   }
   return YES;

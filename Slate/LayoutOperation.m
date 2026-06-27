@@ -189,14 +189,16 @@
       NSMutableArray *titleOrder = [NSMutableArray arrayWithArray:[(ApplicationOptions *)[[layout appOptions] objectForKey:appName] titleOrderRegex]];
       SlateLogger(@"Title Order Regex: %@", titleOrder);
       for (NSInteger j = 0; j < [titleOrder count]; j++) {
+        // Compile the pattern once per pattern (not once per window). A bad pattern
+        // matched no windows before and still does, so behavior is unchanged.
+        NSError *error = nil;
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[titleOrder objectAtIndex:j] options:0 error:&error];
+        if (error != nil) {
+          continue;
+        }
         for (NSInteger i = 0; i < CFArrayGetCount(windowsArr); i++) {
-          SlateLogger(@" Checking Title: %@", [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)]);
-          NSError *error = nil;
-          NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[titleOrder objectAtIndex:j] options:0 error:&error];
-          if (error != nil) {
-            continue;
-          }
-          NSString *currWinTitle = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)];
+          NSString *currWinTitle = [AccessibilityWrapper getTitle:CFArrayGetValueAtIndex(windowsArr, i)]; // fetch once
+          SlateLogger(@" Checking Title: %@", currWinTitle);
           NSUInteger numMatches = [regex numberOfMatchesInString:currWinTitle options:0 range:NSMakeRange(0, [currWinTitle length])];
           if(numMatches > 0) {
             SlateLogger(@" Found Title: %@", currWinTitle);

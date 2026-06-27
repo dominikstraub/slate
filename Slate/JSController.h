@@ -42,6 +42,7 @@ JSExportAs(on, - (void)on:(NSString *)what do:(JSValue *)callback);
   NSMutableDictionary *functions;
   BOOL inited;
   NSMutableDictionary *eventCallbacks;
+  JSValue *objectKeysFunc; // cached Object.keys for the current jsContext (see jsToDictionary:)
 }
 @property NSMutableDictionary *functions;
 @property NSMutableDictionary *eventCallbacks;
