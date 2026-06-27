@@ -189,12 +189,14 @@ static NSDictionary *unselectableApps = nil;
 
 + (BOOL)focusMainWindow:(NSRunningApplication *)app {
   BOOL couldFocus = YES;
-  CFTypeRef _window;
+  CFTypeRef _window = NULL;
   pid_t focusPID = [app processIdentifier];
   AXUIElementRef focusAppRef = AXUIElementCreateApplication(focusPID);
-  AXUIElementCopyAttributeValue(focusAppRef, (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window);
+  AXError focusErr = AXUIElementCopyAttributeValue(focusAppRef, (CFStringRef)NSAccessibilityFocusedWindowAttribute, (CFTypeRef *)&_window);
   CFRelease(focusAppRef);
-  if (_window == NULL) return [AccessibilityWrapper focusApp:app];
+  // On AX failure the out-param may be left untouched; _window is initialized to
+  // NULL above and the error checked here so we never use an indeterminate ref.
+  if (focusErr != kAXErrorSuccess || _window == NULL) return [AccessibilityWrapper focusApp:app];
   if (AXUIElementSetAttributeValue((AXUIElementRef)_window, (CFStringRef)NSAccessibilityMainAttribute, kCFBooleanTrue) != kAXErrorSuccess) {
     SlateLogger(@"ERROR: Could not change focus to window");
     couldFocus = NO;

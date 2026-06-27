@@ -26,6 +26,7 @@
 #import "ResizeOperation.h"
 #import "Operation.h"
 #import "MoveOperation.h"
+#import "CornerOperation.h"
 #import "ExpressionPoint.h"
 #import "SnapshotList.h"
 #import "Constants.h"
@@ -79,6 +80,17 @@
 - (void)testExpressionPoint {
   XCTAssertEqual([ExpressionPoint expToFloat:@"2+3" withDict:@{}], (float)5.0, @"arithmetic evaluates");
   XCTAssertThrows([ExpressionPoint expToFloat:nil withDict:@{}], @"nil expression throws");
+}
+
+// Phase 1 (H3): the corner DSL path must wrap the resize expression in parens so a
+// top-level +/- expression keeps its precedence. Regression: it concatenated the
+// expression bare, so resize:screenSizeX-100;... bound as ...-screenSizeX-100,
+// mispositioning the window off the opposite screen edge.
+- (void)testCornerResizeExpressionParenthesized {
+  id op = [CornerOperation cornerOperationFromString:@"corner top-right resize:screenSizeX-100;screenSizeY-50"];
+  XCTAssertTrue([op isKindOfClass:[MoveOperation class]], @"corner parses to a MoveOperation");
+  NSString *tlx = [[(MoveOperation *)op topLeft] x];
+  XCTAssertTrue([tlx containsString:@"-(screenSizeX-100)"], @"top-right X must subtract the parenthesized resize expression, got: %@", tlx);
 }
 
 // Issue 1: a SnapshotList's stackSize must survive serialization; legacy dicts (no key) fall back to the config default.

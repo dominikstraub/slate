@@ -84,14 +84,20 @@
     dim = @"windowSizeX;windowSizeY";
   }
 
+  NSString *dimX = [[dim componentsSeparatedByString:SEMICOLON] objectAtIndex:0];
+  NSString *dimY = [[dim componentsSeparatedByString:SEMICOLON] objectAtIndex:1];
+  // Keep the parenthesization in sync with -afterEvalOptions above: wrap the
+  // inserted dimension expression in (...) so a top-level +/- expression keeps
+  // its precedence (e.g. resize:screenSizeX-100;... must subtract the whole
+  // expression, not just screenSizeX).
   if ([direction isEqualToString:TOP_LEFT]) {
     tl = @"screenOriginX;screenOriginY";
   } else if ([direction isEqualToString:TOP_RIGHT]) {
-    tl = [[@"screenOriginX+screenSizeX-" stringByAppendingString:[[dim componentsSeparatedByString:SEMICOLON] objectAtIndex:0]] stringByAppendingString:@";screenOriginY"];
+    tl = [NSString stringWithFormat:@"screenOriginX+screenSizeX-(%@);screenOriginY", dimX];
   } else if ([direction isEqualToString:BOTTOM_LEFT]) {
-    tl = [@"screenOriginX;screenOriginY+screenSizeY-" stringByAppendingString:[[dim componentsSeparatedByString:SEMICOLON] objectAtIndex:1]];
+    tl = [NSString stringWithFormat:@"screenOriginX;screenOriginY+screenSizeY-(%@)", dimY];
   } else if ([direction isEqualToString:BOTTOM_RIGHT]) {
-    tl = [[[@"screenOriginX+screenSizeX-" stringByAppendingString:[[dim componentsSeparatedByString:SEMICOLON] objectAtIndex:0]] stringByAppendingString:@";screenOriginY+screenSizeY-"] stringByAppendingString:[[dim componentsSeparatedByString:SEMICOLON] objectAtIndex:1]];
+    tl = [NSString stringWithFormat:@"screenOriginX+screenSizeX-(%@);screenOriginY+screenSizeY-(%@)", dimX, dimY];
   } else {
     SlateLogger(@"ERROR: Unrecognized corner '%@'", direction);
     @throw([NSException exceptionWithName:@"Unrecognized Corner" reason:[NSString stringWithFormat:@"Unrecognized corner '%@' in '%@'", direction, cornerOperation] userInfo:nil]);
