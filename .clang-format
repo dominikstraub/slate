@@ -1,0 +1,22 @@
+# clang-format config for Slate (Objective-C).
+#
+# No `Language:` key on purpose: a keyless section defaults to Cpp, which
+# clang-format also applies to .m/Objective-C files. An `ObjC`-only section is
+# rejected ("Unsuitable") for the C-style headers that have no @interface
+# (e.g. CarbonCompat.h, SlateLogger.h), which would break the pre-commit hook.
+#
+# Tuned to match the existing code so adoption stays low-churn:
+#   - 2-space indent, attached (K&R) braces  -> Google base
+#   - right-aligned pointers (NSString *foo) -> PointerAlignment: Right
+#   - lines run long; don't rewrap them      -> ColumnLimit: 0
+#   - don't reorder #imports                 -> SortIncludes: false
+#
+# Pin invocations to Xcode's clang-format (xcrun -f clang-format) so output is
+# deterministic regardless of any Homebrew clang-format on $PATH.
+---
+BasedOnStyle: Google
+IndentWidth: 2
+ColumnLimit: 0
+DerivePointerAlignment: false
+PointerAlignment: Right
+SortIncludes: false

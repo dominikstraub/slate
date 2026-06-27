@@ -65,6 +65,13 @@ Run tests:
 xcodebuild test -scheme Slate -destination 'platform=macOS'
 ```
 
+Developer setup (formatter + pre-commit hook):
+```bash
+make setup     # install the clang-format pre-commit hook
+make format    # format your staged changes
+```
+See `make help` for all targets (formatting, clang-tidy, static analyzer).
+
 ## Manual
 
 * [Configuring Slate](doc/configuration.md)

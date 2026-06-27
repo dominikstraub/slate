@@ -1,0 +1,25 @@
+# clang-tidy config for Slate (Objective-C) — used by `make tidy` only.
+# NOT run by the pre-commit hook (that does clang-format checking only).
+#
+# Requires a compile_commands.json (run `make compile-db`) and clang-tidy on
+# PATH (`brew install llvm`). Both are best-effort; see the Makefile.
+#
+# A modest, low-noise starting set. clang-analyzer-* mirrors what
+# `make analyze` (xcodebuild analyze) runs; bugprone/performance catch common
+# real defects. Broad readability/modernize families are left off on purpose —
+# this is a long-lived Objective-C fork, not greenfield, and those produce a lot
+# of churn-y advice. Enable more as desired.
+Checks: >
+  clang-analyzer-*,
+  bugprone-*,
+  performance-*,
+  readability-inconsistent-declaration-parameter-name,
+  readability-misleading-indentation,
+  readability-redundant-control-flow,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-assignment-in-if-condition
+
+# Only report on our own sources, not system/SDK headers.
+HeaderFilterRegex: '.*/Slate/.*\.h$'
+WarningsAsErrors: ''
+FormatStyle: file

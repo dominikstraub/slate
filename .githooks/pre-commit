@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# Slate pre-commit hook: block the commit if staged .m/.h changes are not
+# clang-format clean (checked on changed lines only). No auto-formatting — run
+# `make format` to fix, then re-stage.
+#
+# Activate with `make setup` (sets core.hooksPath=.githooks). Shared logic lives
+# in scripts/format.sh, also exposed as `make format-check`.
+#
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+exec "$ROOT/scripts/format.sh" check

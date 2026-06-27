@@ -8,3 +8,6 @@ dmg/
 tmp
 doc/*.html
 .DS_Store
+# clang-tidy build database + fixit artifacts (see `make compile-db` / `make tidy`)
+compile_commands.json
+clang-tidy-fixes.yaml
