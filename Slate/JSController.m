@@ -115,6 +115,9 @@ static JSController *_instance = nil;
   return [jsContext evaluateScript:script];
 }
 
+// The key is derived from the count of stored functions, which stays unique only
+// because `functions` is append-only for the process lifetime (config reload =
+// relaunch). If entries are ever removed, switch to a monotonic counter.
 - (NSString *)genFuncKey {
   return [NSString stringWithFormat:@"javascript:function[%ld]", (long)[functions count]];
 }

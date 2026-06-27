@@ -119,7 +119,7 @@
 - (void)showConfigUI {
   [self updateConfigUI];
   for (NSString *configName in [configs allKeys]) {
-    SlateLogger(@"HIDING CONFIG %@", configName);
+    SlateLogger(@"SHOWING CONFIG %@", configName);
     [self performSelectorOnMainThread:@selector(showAll:) withObject:[configs objectForKey:configName] waitUntilDone:YES];
   }
 }

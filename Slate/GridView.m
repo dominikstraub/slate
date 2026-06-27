@@ -148,11 +148,12 @@
   NSPoint mouseLoc;
   NSPoint initialMouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
   NSRect activeRect;
+  [self setPreviousActiveRect:NSMakeRect(-1,-1,-1,-1)]; // sentinel so the first rect (even the 0,0 bottom-left cell) isn't suppressed
 
   while (keepOn) {
     theEvent = [[self window] nextEventMatchingMask: NSEventMaskLeftMouseUp |
                 NSEventMaskLeftMouseDragged];
-    mouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:self];
+    mouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     activeRect = [self rectFromBegin:initialMouseLoc end:mouseLoc];
     NSRect flippedRect = NSMakeRect(activeRect.origin.x, [self height]-1-(activeRect.origin.y+activeRect.size.height), activeRect.size.width+1, activeRect.size.height+1);
     switch ([theEvent type]) {

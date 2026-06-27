@@ -1,5 +1,5 @@
 (function(controller) {
-  for (key in _) {
+  for (var key in _) {
     window["_"+key+"_"] = _[key];
   }
 

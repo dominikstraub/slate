@@ -534,15 +534,12 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
   [statusItem setMenu:statusMenu];
   statusItem.button.image = [NSImage imageNamed:@"status"];
 
-  // Ensure no timer exists
-  @synchronized(timerLock) {
-    currentTimer = nil;
-    timerLock = [[NSObject alloc] init];
-  }
-
-  @synchronized(keyUpLock) {
-    keyUpLock = [[NSObject alloc] init];
-  }
+  // Initialize the locks once, on the main thread, before any tap/timer can run.
+  // Entering @synchronized on these while they are still nil would be a no-op, so
+  // create them directly rather than pretend to lock.
+  currentTimer = nil;
+  timerLock = [[NSObject alloc] init];
+  keyUpLock = [[NSObject alloc] init];
 
   // Check if Accessibility API is enabled
   NSDictionary *options = @{(__bridge NSString *)kAXTrustedCheckOptionPrompt: @YES};

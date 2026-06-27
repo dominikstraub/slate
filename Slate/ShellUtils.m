@@ -40,7 +40,7 @@
 
     NSPipe *pipe = [NSPipe pipe];
     [task setStandardOutput:pipe];
-    [task setStandardInput:[NSPipe pipe]];
+    [task setStandardInput:[NSFileHandle fileHandleWithNullDevice]]; // null stdin: a child that reads stdin gets EOF instead of hanging
 
     NSFileHandle *file = [pipe fileHandleForReading];
 
@@ -73,7 +73,7 @@
     [task setArguments:[NSArray arrayWithObjects:@"-v", command, nil]];
     NSPipe *pipe = [NSPipe pipe];
     [task setStandardOutput:pipe];
-    [task setStandardInput:[NSPipe pipe]];
+    [task setStandardInput:[NSFileHandle fileHandleWithNullDevice]]; // null stdin: a child that reads stdin gets EOF instead of hanging
     NSError *err = nil;
     if (![task launchAndReturnError:&err]) return expanded;
     NSData *data = [[pipe fileHandleForReading] readDataToEndOfFile];
@@ -95,7 +95,7 @@
   NSPipe *pipe = [NSPipe pipe];
   [task setStandardOutput:pipe];
   [task setStandardError:pipe];
-  [task setStandardInput:[NSPipe pipe]];
+  [task setStandardInput:[NSFileHandle fileHandleWithNullDevice]]; // null stdin: a child that reads stdin gets EOF instead of hanging
 
   // NOTE: stdout/stderr share `pipe`. In the wait branch we drain it before
   // waitUntilExit, else a command emitting more than the pipe buffer (~64KB)
@@ -138,7 +138,7 @@
   pipe = [NSPipe pipe];
   [task setStandardOutput:pipe];
   [task setStandardError:pipe];
-  [task setStandardInput:[NSPipe pipe]];
+  [task setStandardInput:[NSFileHandle fileHandleWithNullDevice]]; // null stdin: a child that reads stdin gets EOF instead of hanging
 
   NSFileHandle *file;
   file = [pipe fileHandleForReading];

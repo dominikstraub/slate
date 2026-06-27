@@ -437,9 +437,8 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
     return;
   }
   AccessibilityWrapper *aw = [[AccessibilityWrapper alloc] initWithApp:[[apps objectForKey:currentHintNumber] pointerValue] window:[[windows objectForKey:currentHintNumber] pointerValue]];
-  [aw focus];
+  if (![aw focus]) SlateLogger(@"hint focus failed");
   [self killHints];
-  SlateLogger(@"focus fail");
 }
 
 - (void)parseOption:(NSString *)name value:(id)value {
