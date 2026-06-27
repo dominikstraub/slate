@@ -46,6 +46,11 @@ static NSTimer *currentTimer = nil;
 static EventHotKeyID currentHotKey;
 static SlateAppDelegate *selfRef = nil;
 static EventHandlerRef modifiersEvent;
+// CMD+Tab event taps. Kept at file scope (not locals) so the tap callbacks can
+// re-enable their own tap after macOS disables it on a timeout. Owned for the
+// app lifetime; intentionally never released.
+static CFMachPortRef keyDownEventTap = NULL;
+static CFMachPortRef keyUpEventTap = NULL;
 
 - (IBAction)updateLaunchState {
   if ([launchOnLoginItem state] == NSControlStateValueOn) {
@@ -324,6 +329,13 @@ static const NSTimeInterval KEY_UP_BUFFER = -0.020;
 static BOOL keyUpSeen = YES;
 static NSDate *keyUpTime = nil;
 CGEventRef EatAppSwitcherCallback(CGEventTapProxy proxy, CGEventType type,  CGEventRef event, void *refcon) {
+  if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
+    // macOS disabled the tap (our synchronous work exceeded the tap timeout).
+    // Re-enable it so CMD+Tab interception keeps working instead of silently
+    // dying until the user relaunches.
+    if (keyDownEventTap != NULL) CGEventTapEnable(keyDownEventTap, true);
+    return event;
+  }
   @synchronized(keyUpLock) {
     CGEventFlags flags = CGEventGetFlags(event);
     int64_t keyCode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
@@ -381,6 +393,10 @@ CGEventRef EatAppSwitcherCallback(CGEventTapProxy proxy, CGEventType type,  CGEv
 }
 
 CGEventRef EatAppSwitcherResetCallback(CGEventTapProxy proxy, CGEventType type,  CGEventRef event, void *refcon) {
+  if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
+    if (keyUpEventTap != NULL) CGEventTapEnable(keyUpEventTap, true);
+    return event;
+  }
   @synchronized(keyUpLock) {
     SlateLogger(@"KEY UP");
     @synchronized(timerLock) {
@@ -441,19 +457,25 @@ OSStatus OnModifiersChangedEvent(EventHandlerCallRef nextHandler, EventRef theEv
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   if (cmdTabBinding >= 0 || cmdShiftTabBinding >= 0) {
-    CFMachPortRef keyDownEventTap;
-    CFRunLoopSourceRef keyDownRunLoopSource;
     keyDownEventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, 0, CGEventMaskBit(kCGEventKeyDown), EatAppSwitcherCallback, (__bridge void *)self);
-    keyDownRunLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, keyDownEventTap, 0);
-    CFRunLoopAddSource(CFRunLoopGetCurrent(), keyDownRunLoopSource, kCFRunLoopCommonModes);
-    CGEventTapEnable(keyDownEventTap, true);
+    if (keyDownEventTap != NULL) {
+      CFRunLoopSourceRef keyDownRunLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, keyDownEventTap, 0);
+      CFRunLoopAddSource(CFRunLoopGetCurrent(), keyDownRunLoopSource, kCFRunLoopCommonModes);
+      CFRelease(keyDownRunLoopSource); // the run loop retains the source
+      CGEventTapEnable(keyDownEventTap, true);
+    } else {
+      SlateLogger(@"ERROR: Could not create CMD+Tab key-down event tap (is Accessibility trusted?)");
+    }
 
-    CFMachPortRef keyUpEventTap;
-    CFRunLoopSourceRef keyUpRunLoopSource;
     keyUpEventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, 0, CGEventMaskBit(kCGEventKeyUp), EatAppSwitcherResetCallback, (__bridge void *)self);
-    keyUpRunLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, keyUpEventTap, 0);
-    CFRunLoopAddSource(CFRunLoopGetCurrent(), keyUpRunLoopSource, kCFRunLoopCommonModes);
-    CGEventTapEnable(keyUpEventTap, true);
+    if (keyUpEventTap != NULL) {
+      CFRunLoopSourceRef keyUpRunLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, keyUpEventTap, 0);
+      CFRunLoopAddSource(CFRunLoopGetCurrent(), keyUpRunLoopSource, kCFRunLoopCommonModes);
+      CFRelease(keyUpRunLoopSource); // the run loop retains the source
+      CGEventTapEnable(keyUpEventTap, true);
+    } else {
+      SlateLogger(@"ERROR: Could not create CMD+Tab key-up event tap (is Accessibility trusted?)");
+    }
   }
 }
 
