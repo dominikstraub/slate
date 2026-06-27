@@ -11,15 +11,23 @@ This is a fork of [mattr-/slate](https://github.com/mattr-/slate) (itself a fork
 
 ## Installation
 
-Install via Homebrew:
+Slate is distributed through a personal Homebrew tap. Since Homebrew 6.0,
+third-party taps must be trusted before Homebrew will load them, so installation
+is a one-time trust step followed by the install:
+
 ```bash
-brew install dominikstraub/tap/slate
+brew tap dominikstraub/tap
+brew trust dominikstraub/tap
+brew install --cask slate
 ```
 
-To update to a newer version:
+If you'd rather trust only the Slate cask instead of the whole tap, swap the
+trust line for `brew trust --cask dominikstraub/tap/slate`.
+
+To update to a newer version (no re-trust needed):
 ```bash
 brew update
-brew upgrade dominikstraub/tap/slate
+brew upgrade --cask slate
 ```
 
 Alternatively, download the latest DMG from the [Releases](../../releases) page, open it, and drag Slate to your Applications folder.
