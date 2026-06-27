@@ -122,7 +122,8 @@ static CFMachPortRef keyUpEventTap = NULL;
     EventHotKeyRef myHotKeyRef;
     myHotKeyID.signature = *[[NSString stringWithFormat:@"hotkey%li",i] cStringUsingEncoding:NSASCIIStringEncoding];
     myHotKeyID.id = (UInt32)i;
-    RegisterEventHotKey([binding keyCode], [binding modifiers], myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef);
+    if (RegisterEventHotKey([binding keyCode], [binding modifiers], myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef) != noErr)
+      SlateLogger(@"WARNING: could not register hotkey (keyCode %u, modifiers %u) — it may collide with an existing global hotkey", (unsigned)[binding keyCode], (unsigned)[binding modifiers]);
     [binding setHotKeyRef:myHotKeyRef];
   }
 
@@ -136,7 +137,8 @@ static CFMachPortRef keyUpEventTap = NULL;
     EventHotKeyRef myHotKeyRef;
     myHotKeyID.signature = *[[NSString stringWithFormat:@"hotkey%li",i] cStringUsingEncoding:NSASCIIStringEncoding];
     myHotKeyID.id = (UInt32)i;
-    RegisterEventHotKey([[modalKeyArr objectAtIndex:0] unsignedIntValue], [[modalKeyArr objectAtIndex:1] unsignedIntValue], myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef);
+    if (RegisterEventHotKey([[modalKeyArr objectAtIndex:0] unsignedIntValue], [[modalKeyArr objectAtIndex:1] unsignedIntValue], myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef) != noErr)
+      SlateLogger(@"WARNING: could not register modal hotkey '%@'", modalHashKey);
     [[self modalHotKeyRefs] setObject:[NSValue valueWithPointer:myHotKeyRef] forKey:modalHashKey];
     [[self modalIdToKey] setObject:modalHashKey forKey:[NSNumber numberWithInteger:i]];
     i++;
@@ -243,7 +245,8 @@ static CFMachPortRef keyUpEventTap = NULL;
         EventHotKeyRef myHotKeyRef;
         myHotKeyID.signature = *[[NSString stringWithFormat:@"hotkey%li",i] cStringUsingEncoding:NSASCIIStringEncoding];
         myHotKeyID.id = (UInt32)i;
-        RegisterEventHotKey([binding keyCode], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef);
+        if (RegisterEventHotKey([binding keyCode], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef) != noErr)
+          SlateLogger(@"WARNING: could not register modal binding hotkey (keyCode %u)", (unsigned)[binding keyCode]);
         [binding setHotKeyRef:myHotKeyRef];
         [[self currentModalHotKeyRefs] addObject:[NSValue valueWithPointer:myHotKeyRef]];
         i++;
@@ -254,7 +257,8 @@ static CFMachPortRef keyUpEventTap = NULL;
         myHotKeyID.signature = *[[NSString stringWithFormat:@"hotkey%li",MODAL_ESCAPE_ID] cStringUsingEncoding:NSASCIIStringEncoding];
         myHotKeyID.id = (UInt32)MODAL_ESCAPE_ID;
         NSArray *keyarr = [Binding getKeystrokeFromString:[[SlateConfig getInstance] getConfig:MODAL_ESCAPE_KEY]];
-        RegisterEventHotKey([[keyarr objectAtIndex:0] unsignedIntValue], [[keyarr objectAtIndex:1] unsignedIntValue], myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef);
+        if (RegisterEventHotKey([[keyarr objectAtIndex:0] unsignedIntValue], [[keyarr objectAtIndex:1] unsignedIntValue], myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef) != noErr)
+          SlateLogger(@"WARNING: could not register modal escape hotkey");
         [[self currentModalHotKeyRefs] addObject:[NSValue valueWithPointer:myHotKeyRef]];
       }
       [self setCurrentModalKey:modalKey];

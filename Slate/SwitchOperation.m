@@ -39,20 +39,20 @@
 
 @implementation SwitchOperation
 
-static const NSString *DEFAULT_BACK_KEY = @"`";
-static const NSString *DEFAULT_QUIT_KEY = @"q";
-static const NSString *DEFAULT_FQUIT_KEY = @"f";
-static const NSString *DEFAULT_HIDE_KEY = @"h";
+static NSString *const DEFAULT_BACK_KEY = @"`";
+static NSString *const DEFAULT_QUIT_KEY = @"q";
+static NSString *const DEFAULT_FQUIT_KEY = @"f";
+static NSString *const DEFAULT_HIDE_KEY = @"h";
 
 @synthesize modifiers;
 
 - (id)init {
   self = [super init];
   if (self) {
-    backKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_BACK_KEY] unsignedIntValue];
-    quitKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_QUIT_KEY] unsignedIntValue];
-    fquitKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_FQUIT_KEY] unsignedIntValue];
-    hideKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_HIDE_KEY] unsignedIntValue];
+    NSNumber *bk = [Binding keyCodeForString:DEFAULT_BACK_KEY];   if (bk != nil) backKeyCode = [bk unsignedIntValue];
+    NSNumber *qk = [Binding keyCodeForString:DEFAULT_QUIT_KEY];   if (qk != nil) quitKeyCode = [qk unsignedIntValue];
+    NSNumber *fqk = [Binding keyCodeForString:DEFAULT_FQUIT_KEY]; if (fqk != nil) fquitKeyCode = [fqk unsignedIntValue];
+    NSNumber *hk = [Binding keyCodeForString:DEFAULT_HIDE_KEY];   if (hk != nil) hideKeyCode = [hk unsignedIntValue];
     appsToQuit = [NSMutableArray array];
     appsToForceQuit = [NSMutableArray array];
     apps = nil;
@@ -66,10 +66,10 @@ static const NSString *DEFAULT_HIDE_KEY = @"h";
 - (id)initWithOptions:(NSString *)_options {
   self = [super init];
   if (self) {
-    backKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_BACK_KEY] unsignedIntValue];
-    quitKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_QUIT_KEY] unsignedIntValue];
-    fquitKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_FQUIT_KEY] unsignedIntValue];
-    hideKeyCode = [[[Binding asciiToCodeDict] objectForKey:DEFAULT_HIDE_KEY] unsignedIntValue];
+    NSNumber *bk = [Binding keyCodeForString:DEFAULT_BACK_KEY];   if (bk != nil) backKeyCode = [bk unsignedIntValue];
+    NSNumber *qk = [Binding keyCodeForString:DEFAULT_QUIT_KEY];   if (qk != nil) quitKeyCode = [qk unsignedIntValue];
+    NSNumber *fqk = [Binding keyCodeForString:DEFAULT_FQUIT_KEY]; if (fqk != nil) fquitKeyCode = [fqk unsignedIntValue];
+    NSNumber *hk = [Binding keyCodeForString:DEFAULT_HIDE_KEY];   if (hk != nil) hideKeyCode = [hk unsignedIntValue];
     NSMutableArray *optionsArr = [NSMutableArray array];
     [StringTokenizer tokenize:_options into:optionsArr];
     for (NSString *option in optionsArr) {
@@ -77,7 +77,7 @@ static const NSString *DEFAULT_HIDE_KEY = @"h";
       if ([optionTokens count] != 2) continue;
       NSString *keyName = [optionTokens objectAtIndex:0];
       NSString *keyValue = [optionTokens objectAtIndex:1];
-      NSNumber *keyCode = [[Binding asciiToCodeDict] objectForKey:keyValue];
+      NSNumber *keyCode = [Binding keyCodeForString:keyValue];
       if (keyCode == nil) continue;
       if ([keyName isEqualToString:BACK]) {
         backKeyCode = [keyCode unsignedIntValue];
@@ -180,25 +180,32 @@ static const NSString *DEFAULT_HIDE_KEY = @"h";
       i++;
     }
     currentApp = [apps count] > 1 ? 1 : 0; // selecting index 1 requires at least 2 app views
-    [[[switchersToViews objectAtIndex:switcherId] objectAtIndex:currentApp] setSelected:YES];
+    NSArray *viewsForSwitcher = [switchersToViews objectAtIndex:switcherId];
+    if (currentApp < (NSInteger)[viewsForSwitcher count]) {
+      [[viewsForSwitcher objectAtIndex:currentApp] setSelected:YES]; // guard the empty-app-list case
+    }
     switcherId++;
   }
   EventHotKeyID backHotKeyID;
   backHotKeyID.signature = *[@"switchKeyBack" cStringUsingEncoding:NSASCIIStringEncoding];
   backHotKeyID.id = 1000;
-  RegisterEventHotKey(backKeyCode, modifiers, backHotKeyID, GetEventMonitorTarget(), 0, &backHotKeyRef);
+  if (RegisterEventHotKey(backKeyCode, modifiers, backHotKeyID, GetEventMonitorTarget(), 0, &backHotKeyRef) != noErr)
+    SlateLogger(@"WARNING: could not register switch 'back' hotkey");
   EventHotKeyID quitHotKeyID;
   quitHotKeyID.signature = *[@"switchKeyQuit" cStringUsingEncoding:NSASCIIStringEncoding];
   quitHotKeyID.id = 1001;
-  RegisterEventHotKey(quitKeyCode, modifiers, quitHotKeyID, GetEventMonitorTarget(), 0, &quitHotKeyRef);
+  if (RegisterEventHotKey(quitKeyCode, modifiers, quitHotKeyID, GetEventMonitorTarget(), 0, &quitHotKeyRef) != noErr)
+    SlateLogger(@"WARNING: could not register switch 'quit' hotkey");
   EventHotKeyID fquitHotKeyID;
   fquitHotKeyID.signature = *[@"switchKeyFQuit" cStringUsingEncoding:NSASCIIStringEncoding];
   fquitHotKeyID.id = 1002;
-  RegisterEventHotKey(fquitKeyCode, modifiers, fquitHotKeyID, GetEventMonitorTarget(), 0, &fquitHotKeyRef);
+  if (RegisterEventHotKey(fquitKeyCode, modifiers, fquitHotKeyID, GetEventMonitorTarget(), 0, &fquitHotKeyRef) != noErr)
+    SlateLogger(@"WARNING: could not register switch 'force-quit' hotkey");
   EventHotKeyID hideHotKeyID;
   hideHotKeyID.signature = *[@"switchKeyHide" cStringUsingEncoding:NSASCIIStringEncoding];
   hideHotKeyID.id = 1003;
-  RegisterEventHotKey(hideKeyCode, modifiers, hideHotKeyID, GetEventMonitorTarget(), 0, &hideHotKeyRef);
+  if (RegisterEventHotKey(hideKeyCode, modifiers, hideHotKeyID, GetEventMonitorTarget(), 0, &hideHotKeyRef) != noErr)
+    SlateLogger(@"WARNING: could not register switch 'hide' hotkey");
   return YES;
 }
 
@@ -327,14 +334,19 @@ static const NSString *DEFAULT_HIDE_KEY = @"h";
   if (![value isKindOfClass:[NSString class]]) {
     @throw([NSException exceptionWithName:[NSString stringWithFormat:@"Invalid %@", name] reason:[NSString stringWithFormat:@"Invalid %@ '%@'", name, value] userInfo:nil]);
   }
+  NSNumber *keyCode = [Binding keyCodeForString:value];
+  if (keyCode == nil) {
+    SlateLogger(@"WARNING: unknown switch key '%@' for option '%@'; ignoring", value, name);
+    return;
+  }
   if ([name isEqualToString:OPT_BACK]) {
-    backKeyCode = [[[Binding asciiToCodeDict] objectForKey:value] unsignedIntValue];
+    backKeyCode = [keyCode unsignedIntValue];
   } else if ([name isEqualToString:OPT_QUIT]) {
-    quitKeyCode = [[[Binding asciiToCodeDict] objectForKey:value] unsignedIntValue];
+    quitKeyCode = [keyCode unsignedIntValue];
   } else if ([name isEqualToString:OPT_FORCE_QUIT]) {
-    fquitKeyCode = [[[Binding asciiToCodeDict] objectForKey:value] unsignedIntValue];
+    fquitKeyCode = [keyCode unsignedIntValue];
   } else if ([name isEqualToString:OPT_HIDE]) {
-    hideKeyCode = [[[Binding asciiToCodeDict] objectForKey:value] unsignedIntValue];
+    hideKeyCode = [keyCode unsignedIntValue];
   }
 }
 

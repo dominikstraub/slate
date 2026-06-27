@@ -103,6 +103,7 @@ static SlateConfig *_instance = nil;
   if ([c hasPrefix:@"_javascript_::"]) {
     NSString *fkey = [c stringByReplacingOccurrencesOfString:@"_javascript_::" withString:@""];
     id ret = [[JSController getInstance] runCallableFunction:fkey];
+    if (ret == nil) return nil; // don't fabricate the literal "(null)" from a nil JS result
     return [NSString stringWithFormat:@"%@", ret];
   }
   return c;

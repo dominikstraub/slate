@@ -31,6 +31,7 @@
 #import "SnapshotList.h"
 #import "Constants.h"
 #import "JSController.h"
+#import "Binding.h"
 
 @interface TestRegressions : XCTestCase
 @end
@@ -91,6 +92,14 @@
   XCTAssertTrue([op isKindOfClass:[MoveOperation class]], @"corner parses to a MoveOperation");
   NSString *tlx = [[(MoveOperation *)op topLeft] x];
   XCTAssertTrue([tlx containsString:@"-(screenSizeX-100)"], @"top-right X must subtract the parenthesized resize expression, got: %@", tlx);
+}
+
+// Phase 4: Binding +keyCodeForString: returns a code for a known key and nil for an
+// unknown one, so callers can reject bad input instead of coercing nil to keycode 0 ('a').
+- (void)testKeyCodeForString {
+  XCTAssertNotNil([Binding keyCodeForString:@"a"], @"a known key returns a code");
+  XCTAssertNil([Binding keyCodeForString:@"definitelynotakey"], @"an unknown key returns nil");
+  XCTAssertNil([Binding keyCodeForString:nil], @"nil input returns nil");
 }
 
 // Issue 1: a SnapshotList's stackSize must survive serialization; legacy dicts (no key) fall back to the config default.

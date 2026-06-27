@@ -143,12 +143,13 @@ static const UInt32 ESC_GRID_ID = 10002;
   }
 
   // Register the escape hotkey
-  NSNumber *keyCode = [[Binding asciiToCodeDict] objectForKey:@"esc"];
+  NSNumber *keyCode = [Binding keyCodeForString:@"esc"];
   EventHotKeyID myHotKeyID;
   EventHotKeyRef myHotKeyRef;
   myHotKeyID.signature = *[@"hotkeyESC" cStringUsingEncoding:NSASCIIStringEncoding];
   myHotKeyID.id = (UInt32)(ESC_GRID_ID);
-  RegisterEventHotKey([keyCode unsignedIntValue], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef);
+  if (RegisterEventHotKey([keyCode unsignedIntValue], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef) != noErr)
+    SlateLogger(@"WARNING: could not register grid escape hotkey");
   escHotKeyRef = myHotKeyRef;
 
   return YES;

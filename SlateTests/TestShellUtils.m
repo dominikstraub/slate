@@ -45,6 +45,13 @@
   XCTAssertEqual([task terminationStatus], 15, @"Status should be 15");
 }
 
+// run:args:wait:path: must return nil (not a non-nil task) when the command cannot
+// launch, so ShellOperation reports real failure instead of success.
+- (void)testRunArgsReturnsNilOnLaunchFailure {
+  NSTask *task = [ShellUtils run:@"/nonexistent/bogus-binary-xyz" args:[NSArray array] wait:NO path:nil];
+  XCTAssertNil(task, @"a command that cannot launch should return nil, not a non-nil task");
+}
+
 - (void)testRunWithQuotedArgs {
   NSString *result = [ShellUtils run:@"/bin/echo 'with single' \"and double quotes\"" wait:YES path:@"/"];
   NSError *err = nil;

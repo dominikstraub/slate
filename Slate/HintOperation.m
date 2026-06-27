@@ -208,14 +208,23 @@ static const UInt32 ESC_HINT_ID = 10001;
   [windows setObject:[NSValue valueWithPointer:windowRef] forKey:currentHintNumber];
   [apps setObject:[NSValue valueWithPointer:appRef] forKey:currentHintNumber];
 
-  // Register the hotkey
-  NSNumber *keyCode = [[Binding asciiToCodeDict] objectForKey:[hintCode lowercaseString]];
+  // Register the hotkey. Skip (rather than coerce nil -> keycode 0 = 'a') when the
+  // hint character isn't in the current layout, so an unmappable char doesn't
+  // silently collide with the 'a' hint.
+  NSNumber *keyCode = [Binding keyCodeForString:[hintCode lowercaseString]];
   EventHotKeyID myHotKeyID;
   EventHotKeyRef myHotKeyRef;
   myHotKeyID.signature = *[[NSString stringWithFormat:@"hotkey%ld",currentHint] cStringUsingEncoding:NSASCIIStringEncoding];
   myHotKeyID.id = (UInt32)currentHint;
-  RegisterEventHotKey([keyCode unsignedIntValue], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef);
-  [hotkeyRefs addObject:[NSValue valueWithPointer:myHotKeyRef]];
+  if (keyCode != nil) {
+    if (RegisterEventHotKey([keyCode unsignedIntValue], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef) == noErr) {
+      [hotkeyRefs addObject:[NSValue valueWithPointer:myHotKeyRef]];
+    } else {
+      SlateLogger(@"WARNING: could not register hint hotkey for '%@'", hintCode);
+    }
+  } else {
+    SlateLogger(@"WARNING: hint char '%@' has no key code in this layout; skipping its hotkey", hintCode);
+  }
   currentHint++;
 }
 
@@ -368,12 +377,13 @@ CFComparisonResult rightToLeftWindows(const void *val1, const void *val2, void *
   }
 
   // Register the escape hotkey
-  NSNumber *keyCode = [[Binding asciiToCodeDict] objectForKey:@"esc"];
+  NSNumber *keyCode = [Binding keyCodeForString:@"esc"];
   EventHotKeyID myHotKeyID;
   EventHotKeyRef myHotKeyRef;
   myHotKeyID.signature = *[@"hotkeyESC" cStringUsingEncoding:NSASCIIStringEncoding];
   myHotKeyID.id = (UInt32)(ESC_HINT_ID);
-  RegisterEventHotKey([keyCode unsignedIntValue], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef);
+  if (RegisterEventHotKey([keyCode unsignedIntValue], 0, myHotKeyID, GetEventMonitorTarget(), 0, &myHotKeyRef) != noErr)
+    SlateLogger(@"WARNING: could not register hint escape hotkey");
   [hotkeyRefs addObject:[NSValue valueWithPointer:myHotKeyRef]];
 
   // Set the hide timer

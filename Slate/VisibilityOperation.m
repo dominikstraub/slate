@@ -85,6 +85,10 @@
       // run through ALL THE APPS
       if ([skipApp isEqualToString:CURRENT]) {
         skipApp = [[RunningApplications focusedApp] localizedName];
+        if (skipApp == nil) {
+          SlateLogger(@"WARNING: all-but:current with no focused app; skipping to avoid hiding every app");
+          continue;
+        }
       }
       for (NSRunningApplication *theApp in [RunningApplications getInstance]) {
         if ([skipApp isEqualToString:[theApp localizedName]]) continue;

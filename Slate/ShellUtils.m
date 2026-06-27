@@ -23,6 +23,10 @@
 #import "SlateLogger.h"
 #import "StringTokenizer.h"
 
+@interface ShellUtils ()
++ (NSString *)resolveLaunchPath:(NSString *)command;
+@end
+
 @implementation ShellUtils
 
 + (BOOL)commandExists:(NSString *)command {
@@ -55,11 +59,38 @@
   }
 }
 
+// Resolve a command to an absolute launch path NSTask can use. Tilde/absolute
+// paths are expanded and returned as-is; a bare name is resolved via `command -v`
+// (PATH lookup) when that yields an absolute path. Shell builtins/functions have
+// no executable file and are returned unchanged (they require a /bin/sh -c wrapper).
++ (NSString *)resolveLaunchPath:(NSString *)command {
+  if (command == nil) return command;
+  NSString *expanded = [command stringByExpandingTildeInPath];
+  if ([expanded hasPrefix:@"/"]) return expanded;
+  @try {
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath:@"/usr/bin/command"];
+    [task setArguments:[NSArray arrayWithObjects:@"-v", command, nil]];
+    NSPipe *pipe = [NSPipe pipe];
+    [task setStandardOutput:pipe];
+    [task setStandardInput:[NSPipe pipe]];
+    NSError *err = nil;
+    if (![task launchAndReturnError:&err]) return expanded;
+    NSData *data = [[pipe fileHandleForReading] readDataToEndOfFile];
+    [task waitUntilExit];
+    NSString *resolved = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if ([resolved hasPrefix:@"/"]) return resolved;
+    return expanded; // builtin / function / not found: leave as-is
+  } @catch (id ex) {
+    return expanded;
+  }
+}
+
 + (NSTask *)run:(NSString *)command args:(NSArray *)args wait:(BOOL)wait path:(NSString *)path {
   NSTask *task = [[NSTask alloc] init];
-  [task setLaunchPath:command];
+  [task setLaunchPath:[ShellUtils resolveLaunchPath:command]];
   [task setArguments:args];
-  if (path != nil) [task setCurrentDirectoryPath:path];
+  if (path != nil) [task setCurrentDirectoryPath:[path stringByExpandingTildeInPath]];
 
   NSPipe *pipe = [NSPipe pipe];
   [task setStandardOutput:pipe];
@@ -76,7 +107,7 @@
   NSError *err = nil;
   if (![task launchAndReturnError:&err]) {
     SlateLogger(@"ERROR: could not launch '%@': %@", command, err);
-    return task;
+    return nil;
   }
   if (wait){
     [[pipe fileHandleForReading] readDataToEndOfFile]; // drain BEFORE waiting to avoid a full-pipe deadlock
@@ -99,7 +130,7 @@
   }
   NSTask *task;
   task = [[NSTask alloc] init];
-  [task setLaunchPath:[command stringByExpandingTildeInPath]];
+  [task setLaunchPath:[ShellUtils resolveLaunchPath:command]];
   [task setArguments:args];
   if (path != nil) [task setCurrentDirectoryPath:[path stringByExpandingTildeInPath]];
 

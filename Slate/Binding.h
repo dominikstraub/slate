@@ -43,6 +43,7 @@
 @property (assign) BOOL toggle;
 
 + (NSDictionary *)asciiToCodeDict;
++ (NSNumber *)keyCodeForString:(NSString *)str;
 - (id)initWithString:(NSString *)binding;
 - (id)initWithKeystroke:(NSString*)keystroke operation:(Operation*)op_ repeat:(BOOL)repeat_;
 - (BOOL)doOperation;

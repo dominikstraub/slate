@@ -252,4 +252,13 @@ static NSDictionary *dictionary = nil;
   return dictionary;
 }
 
+// Checked keycode lookup: returns the key code for an ASCII char / key name, or
+// nil if it isn't present in the current keyboard layout. Callers MUST handle nil
+// rather than coercing it — a nil NSNumber's -unsignedIntValue is 0, i.e. the 'a'
+// key, which silently mis-binds.
++ (NSNumber *)keyCodeForString:(NSString *)str {
+  if (str == nil) return nil;
+  return [[Binding asciiToCodeDict] objectForKey:str];
+}
+
 @end
