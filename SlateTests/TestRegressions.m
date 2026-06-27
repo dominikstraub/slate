@@ -29,6 +29,8 @@
 #import "CornerOperation.h"
 #import "ExpressionPoint.h"
 #import "SnapshotList.h"
+#import "Snapshot.h"
+#import "WindowSnapshot.h"
 #import "Constants.h"
 #import "JSController.h"
 #import "Binding.h"
@@ -92,6 +94,17 @@
   XCTAssertTrue([op isKindOfClass:[MoveOperation class]], @"corner parses to a MoveOperation");
   NSString *tlx = [[(MoveOperation *)op topLeft] x];
   XCTAssertTrue([tlx containsString:@"-(screenSizeX-100)"], @"top-right X must subtract the parenthesized resize expression, got: %@", tlx);
+}
+
+// Phase 8: a malformed/hand-edited snapshots file (wrong inner shapes) must be
+// tolerated on load, not crash at launch.
+- (void)testMalformedSnapshotDictDoesNotCrash {
+  NSDictionary *badSnapshot = @{APPS: @[@"not a dict"]}; // APPS app value is not a dict
+  XCTAssertNoThrow([Snapshot snapshotFromDictionary:badSnapshot], @"malformed snapshot must not crash");
+  NSDictionary *badList = @{NAME: @"x", SNAPSHOTS: @"not an array", STACK_SIZE: @"nan"};
+  XCTAssertNoThrow([SnapshotList snapshotListFromDictionary:badList], @"malformed snapshot list must not crash");
+  NSDictionary *badWindow = @{X: @[@1], TITLE: @[@"a"]}; // numeric/string fields supplied as arrays
+  XCTAssertNoThrow([WindowSnapshot windowSnapshotFromDictionary:badWindow], @"malformed window must not crash");
 }
 
 // Phase 5: a resize op built from a JS-style config with numeric (NSNumber) width/

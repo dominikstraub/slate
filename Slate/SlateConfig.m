@@ -387,8 +387,12 @@ static SlateConfig *_instance = nil;
 - (void)snapshotsFromDictionary:(NSDictionary *)snapshotsDict {
   NSArray *keys = [snapshotsDict allKeys];
   for (NSString *name in keys) {
-    SnapshotList *list = [SnapshotList snapshotListFromDictionary:[snapshotsDict objectForKey:name]];
-    [snapshots setObject:list forKey:[list name]];
+    id listDict = [snapshotsDict objectForKey:name];
+    if (![listDict isKindOfClass:[NSDictionary class]]) continue;
+    SnapshotList *list = [SnapshotList snapshotListFromDictionary:listDict];
+    if ([[list name] isKindOfClass:[NSString class]]) { // skip a list with a missing/non-string name (nil key would throw)
+      [snapshots setObject:list forKey:[list name]];
+    }
   }
 }
 

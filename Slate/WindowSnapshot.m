@@ -51,11 +51,21 @@
           [NSNumber numberWithFloat:size.height], HEIGHT, nil];
 }
 
+// Coerce a dictionary value loaded from disk to a float only when it is actually a
+// number/string; a malformed file could otherwise supply an array/dict and crash
+// -floatValue with an unrecognized selector.
+static float floatFromDictValue(id v) {
+  if ([v isKindOfClass:[NSNumber class]] || [v isKindOfClass:[NSString class]]) return [v floatValue];
+  return 0.0f;
+}
+
 + (WindowSnapshot *)windowSnapshotFromDictionary:(NSDictionary *)dict {
-  return [[WindowSnapshot alloc] initWithAppName:[dict objectForKey:APP_NAME]
-                                           title:[dict objectForKey:TITLE]
-                                         topLeft:NSMakePoint([[dict objectForKey:X] floatValue], [[dict objectForKey:Y] floatValue])
-                                            size:NSMakeSize([[dict objectForKey:WIDTH] floatValue], [[dict objectForKey:HEIGHT] floatValue])];
+  id appName = [dict objectForKey:APP_NAME];
+  id title = [dict objectForKey:TITLE];
+  return [[WindowSnapshot alloc] initWithAppName:([appName isKindOfClass:[NSString class]] ? appName : @"")
+                                           title:([title isKindOfClass:[NSString class]] ? title : @"")
+                                         topLeft:NSMakePoint(floatFromDictValue([dict objectForKey:X]), floatFromDictValue([dict objectForKey:Y]))
+                                            size:NSMakeSize(floatFromDictValue([dict objectForKey:WIDTH]), floatFromDictValue([dict objectForKey:HEIGHT]))];
 }
 
 

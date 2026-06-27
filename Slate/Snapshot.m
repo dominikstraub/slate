@@ -62,10 +62,13 @@
 + (Snapshot *)snapshotFromDictionary:(NSDictionary *)dict {
   Snapshot *s = [[Snapshot alloc] init];
   NSDictionary *appsDict = [dict objectForKey:APPS];
+  if (![appsDict isKindOfClass:[NSDictionary class]]) return s; // tolerate a malformed/hand-edited file
   NSArray *appNames = [appsDict allKeys];
   for (NSString *appName in appNames) {
-    NSArray *windowDicts = [appsDict objectForKey:appName];
-    for (NSDictionary *windowDict in windowDicts) {
+    id windowDicts = [appsDict objectForKey:appName];
+    if (![windowDicts isKindOfClass:[NSArray class]]) continue;
+    for (id windowDict in windowDicts) {
+      if (![windowDict isKindOfClass:[NSDictionary class]]) continue;
       [s addWindow:[WindowSnapshot windowSnapshotFromDictionary:windowDict] app:appName];
     }
   }

@@ -34,12 +34,12 @@
   NSString *x = @"x";
   NSString *y = @"y";
   ExpressionPoint *a = [[ExpressionPoint alloc] initWithX:x y:y];
-  XCTAssertEqual([a x], x, @"x should be x");
-  XCTAssertEqual([a y], y, @"y should be y");
+  XCTAssertEqualObjects([a x], x, @"x should be x");
+  XCTAssertEqualObjects([a y], y, @"y should be y");
   [a setX:y];
   [a setY:x];
-  XCTAssertEqual([a x], y, @"x should be y");
-  XCTAssertEqual([a y], x, @"y should be x");
+  XCTAssertEqualObjects([a x], y, @"x should be y");
+  XCTAssertEqualObjects([a y], x, @"y should be x");
 }
 
 - (void)testGetPointWithDict {

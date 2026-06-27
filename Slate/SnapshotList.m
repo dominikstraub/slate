@@ -92,7 +92,7 @@
 
 + (SnapshotList *)snapshotListFromDictionary:(NSDictionary *)dict {
     NSNumber *savedStackSize = [dict objectForKey:STACK_SIZE];
-    SnapshotList *sl = (savedStackSize != nil)
+    SnapshotList *sl = ([savedStackSize isKindOfClass:[NSNumber class]])
       ? [[SnapshotList alloc] initWithName:[dict objectForKey:NAME]
                                 saveToDisk:[[dict objectForKey:SAVE_TO_DISK] boolValue]
                                    isStack:[[dict objectForKey:STACK] boolValue]
@@ -100,9 +100,12 @@
       : [[SnapshotList alloc] initWithName:[dict objectForKey:NAME]
                                 saveToDisk:[[dict objectForKey:SAVE_TO_DISK] boolValue]
                                    isStack:[[dict objectForKey:STACK] boolValue]];
-    NSArray *snapshotsArray = [dict objectForKey:SNAPSHOTS];
-    for (NSDictionary *snap in snapshotsArray) {
+    id snapshotsArray = [dict objectForKey:SNAPSHOTS];
+    if ([snapshotsArray isKindOfClass:[NSArray class]]) {
+      for (id snap in snapshotsArray) {
+        if (![snap isKindOfClass:[NSDictionary class]]) continue;
         [sl addSnapshot:[Snapshot snapshotFromDictionary:snap]];
+      }
     }
     return sl;
 }
