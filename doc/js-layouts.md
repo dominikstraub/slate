@@ -1,6 +1,6 @@
 # Slate JavaScript Configuration: Layouts #
 
-Layouts are used to describe a set of operations that run together that you can reference in the [`layout`](js-operations.md#layout) operation and the [`slate.default`](js-configuration.md#slate-default) function. This page describes them in detail.
+Layouts are used to describe a set of operations that run together that you can reference in the [`layout`](js-configuration.md#slate-operation) operation and the [`slate.default`](js-configuration.md#slate-default) function. This page describes them in detail.
 
 ## Usage ##
 
@@ -18,7 +18,7 @@ slate.default(screenConfig, layoutName);
 
 This will cause the layout with the name `layoutName` to be activated when Slate sees the screen configuration described by `screenConfig`.
 
-Layouts can also be used in the [`slate.operation`](js-configuration.md#slate-operation) function along with the [`layout`](js-operations.md#layout) operation ###
+Layouts can also be used in the [`slate.operation`](js-configuration.md#slate-operation) function along with the [`layout`](js-configuration.md#slate-operation) operation ###
 
 ```javascript
 var layoutOperation = slate.operation("layout", {"name": layoutName});

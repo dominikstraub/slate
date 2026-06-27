@@ -396,7 +396,7 @@ grid options
 
 * `options` is a whitespace separated list of:
     * `padding:INTEGER` is the padding between cells.
-    * `screenRef:width,height`: `width` and `height` are integers specifying the width and height of the grid (number of cells, not absolute size). `screenRef` is either the screenID or screen resolution (`width*height`)
+    * `screenRef:width,height`: `width` and `height` are integers specifying the width and height of the grid (number of cells, not absolute size). `screenRef` is either the screenID or screen resolution (`widthxheight`, e.g. `1680x1050`)
 
 Example:
 

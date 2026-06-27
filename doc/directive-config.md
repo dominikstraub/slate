@@ -37,7 +37,7 @@ The following descriptions are for the JavaScript configs. If you are using the 
 
 #### <a name="secondsBetweenRepeat"/>`secondsBetweenRepeat` ####
 - **type:** Number
-- **default:** `0.1`
+- **default:** `0.2`
 - The number of seconds between repeats (for ops in `repeatOnHoldOps`)
 
 #### <a name="checkDefaultsOnLoad"/>`checkDefaultsOnLoad` ####
@@ -59,6 +59,21 @@ The following descriptions are for the JavaScript configs. If you are using the 
 - **type:** String
 - **default:** `""` (empty string)
 - This is the keystroke that will end modal mode (in addition to the keystroke that started modal mode itself). For example setting this to `esc` will allow you to press `esc` after entering modal mode to exit modal mode. You may specify an entire keystroke with modifiers here e.g. `esc:ctrl`.
+
+#### <a name="menuBarIconHidden"/>`menuBarIconHidden` ####
+- **type:** Boolean
+- **default:** `false`
+- If `true`, Slate will not show its icon in the macOS menu bar.
+
+#### <a name="jsReceiveMoveEvent"/>`jsReceiveMoveEvent` ####
+- **type:** Boolean
+- **default:** `false`
+- If `true`, Slate delivers `windowMoved` events to the JavaScript API. This is enabled automatically when your config registers a `slate.on("windowMoved", ...)` handler; it is off by default because tracking window moves adds overhead.
+
+#### <a name="jsReceiveResizeEvent"/>`jsReceiveResizeEvent` ####
+- **type:** Boolean
+- **default:** `false`
+- If `true`, Slate delivers `windowResized` events to the JavaScript API. This is enabled automatically when your config registers a `slate.on("windowResized", ...)` handler; it is off by default because tracking window resizes adds overhead.
 
 ### Operation-Specific Config Options ###
 
@@ -194,12 +209,12 @@ The following descriptions are for the JavaScript configs. If you are using the 
 
 #### <a name="gridCellBackgroundColor"/>`gridCellBackgroundColor` ####
 - **type:** String with Semicolon Separated Array of Floats **or** an Array of Floats
-- **default:** `"75;77;81;1.0"` (same as `[75, 77, 81, 1.0]`)
+- **default:** `"100;106;116;0.8"` (same as `[100, 106, 116, 0.8]`)
 - The background color for the `grid` operation's cells as an array in the form `"Red;Green;Blue;Alpha"` or `[Red, Green, Blue, Alpha]` where `Red`, `Green`, and `Blue` are numbers between `0.0` and `255.0` and `Alpha` is a number between `0.0` and `1.0`.
 
 #### <a name="gridCellSelectedColor"/>`gridCellSelectedColor` ####
 - **type:** String with Semicolon Separated Array of Floats **or** an Array of Floats
-- **default:** `"75;77;81;1.0"` (same as `[75, 77, 81, 1.0]`)
+- **default:** `"50;53;58;0.8"` (same as `[50, 53, 58, 0.8]`)
 - The selected color for the `grid` operation's cells as an array in the form `"Red;Green;Blue;Alpha"` or `[Red, Green, Blue, Alpha]` where `Red`, `Green`, and `Blue` are numbers between `0.0` and `255.0` and `Alpha` is a number between `0.0` and `1.0`.
 
 #### <a name="gridCellRoundedCornerSize"/>`gridCellRoundedCornerSize` ####
@@ -264,12 +279,12 @@ The following descriptions are for the JavaScript configs. If you are using the 
 
 #### <a name="switchSecondsBeforeRepeat"/>`switchSecondsBeforeRepeat` ####
 - **type:** Number
-- **default:** `0.4`
+- **default:** `0.3`
 - The number of seconds before repeating starts for forward/back keypresses for the switch operation.
 
 #### <a name="switchSecondsBetweenRepeat"/>`switchSecondsBetweenRepeat` ####
 - **type:** Number
-- **default:** `0.05`
+- **default:** `0.03`
 - The number of seconds between repeating the forward/back keypresses for the switch operation.
 
 #### <a name="switchStopRepeatAtEdge"/>`switchStopRepeatAtEdge` ####

@@ -145,7 +145,7 @@ var isResizable = win.isResizable();
 
 **Alias:** `doop`
 
-Perform any [operation](js-operations.md) on the window. Returns `true` if the operation succeeded, `false` if it did not.
+Perform any [operation](js-configuration.md#slate-operation) on the window. Returns `true` if the operation succeeded, `false` if it did not.
 
 ```javascript
 // win is a window object

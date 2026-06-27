@@ -26,6 +26,15 @@ Return the name of the application.
 var name = app.name();
 ```
 
+### bundleIdentifier() ###
+
+Return the bundle identifier of the application (e.g. `"com.apple.Safari"`), or `undefined` if it has none.
+
+```javascript
+// app is an application object
+var bundleID = app.bundleIdentifier();
+```
+
 ### eachWindow() ###
 
 **Alias:** `ewindow`

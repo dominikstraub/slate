@@ -1,6 +1,6 @@
 # Slate JavaScript Configuration: Defaults #
 
-Defaults are used to activate [layouts](js-layouts.md), [snapshots](js-operations.md#snapshot) or run functions when Slate sees a particular screen configuration. Defaults are set using the [`slate.default`](js-configuration.md#slate.default) function. This page describes them in detail.
+Defaults are used to activate [layouts](js-layouts.md), [snapshots](js-configuration.md#slate-operation) or run functions when Slate sees a particular screen configuration. Defaults are set using the [`slate.default`](js-configuration.md#slate-default) function. This page describes them in detail.
 
 ## Usage ##
 
